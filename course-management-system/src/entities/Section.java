@@ -16,6 +16,9 @@ public class Section {
         this.lessons = new ArrayList<Lesson>();
     }
 
+    public int getID() {
+        return id;
+    }
     public String getTitle() {
         return title;
     }

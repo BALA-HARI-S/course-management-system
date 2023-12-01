@@ -16,6 +16,9 @@ public class Lesson {
         this.duration = duration;
     }
 
+    public int getID() {
+        return id;
+    }
     public String getTitle() {
         return title;
     }
