@@ -24,6 +24,7 @@ public class Lesson {
         this.title = title;
     }
 
+    public int getDuration() { return duration; }
     @Override
     public String toString(){
         return "Lesson " + id + " - " + title;
