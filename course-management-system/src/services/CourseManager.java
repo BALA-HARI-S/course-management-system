@@ -21,15 +21,17 @@ public class CourseManager {
         boolean flag = true;
 
         while(flag){
-
+            printCourse();
             printActions();
             System.out.print("How can I help you (Choose any option): ");
             int option = scanner.nextInt();
 
             switch (option){
-                case 1 -> {addLesson();flag = false;}
-                case 2 -> {addSection();flag = false;}
-                case 3 -> {removeLesson();flag = false;}
+                case 0 -> flag = false;
+                case 1 -> addLesson();
+                case 2 -> addSection();
+                case 3 -> removeLesson();
+                case 4 -> printCourse();
                 default -> {
                     System.out.println("INVALID_VALUE");
                     flag = false;
@@ -40,15 +42,21 @@ public class CourseManager {
     }
 
     private void sampleCourse(){
-        Course jvm = new Course("Java Programming Masterclass for Software Developers","Tim", "29/12/23",
+        Course jvm = new Course(1,"Java Programming Masterclass for Software Developers","Tim", "29/12/23",
                 200.00, 4.5);
         courses.add(jvm);
-        Section section1 = new Section("Course Introduction");
-        Lesson lesson1 = new Lesson("Introduction to the course", 2);
-        Lesson lesson2 = new Lesson("Remaster in progress", 10);
+        Section section1 = new Section(1,"Course Introduction");
+        Lesson lesson1 = new Lesson(1,"Introduction to the course", 2);
+        Lesson lesson2 = new Lesson(2,"Remaster in progress", 10);
+        Section section2 = new Section(1,"IntelliJ Setup");
+        Lesson lesson3 = new Lesson(3,"IntelliJ Installation", 2);
+        Lesson lesson4 = new Lesson(4,"Remaster in progress", 3);
         jvm.addSection(section1);
         section1.addLesson(lesson1);
         section1.addLesson(lesson2);
+        jvm.addSection(section2);
+        section2.addLesson(lesson3);
+        section2.addLesson(lesson4);
     }
 
     private void printActions(){
@@ -70,16 +78,22 @@ public class CourseManager {
                 15) longestLessonInEachSection
                 16) read course from a file
                 17) write course into a file (pretty print)
+                Exit (0)
                 """;
         System.out.println(textBlock);
     }
     private void addLesson(){
         Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Lesson Number : ");
+        int lessonNo = scanner.nextInt();
+
         System.out.print("Lesson Title : ");
         String title = scanner.nextLine();
 
         System.out.print("Lesson Duration : ");
         int duration = scanner.nextInt();
+
         System.out.println("\nList of Sections");
 
         // List sections to choose one from to add lesson
@@ -90,7 +104,7 @@ public class CourseManager {
         System.out.print("Select a section(No) : ");
         int sectionID = scanner.nextInt();
         Section section = courses.get(0).getSections().get(sectionID-1);
-        section.getLessons().add(new Lesson(title, duration));
+        section.getLessons().add(new Lesson(lessonNo,title, duration));
         System.out.println("New lesson added successfully\n");
         printCourse();
         scanner.close();
@@ -98,14 +112,16 @@ public class CourseManager {
 
     private void addSampleLesson(int sectionID){
         Section section = courses.get(0).getSections().get(sectionID-1);
-        section.getLessons().add(new Lesson("Sample lesson", 4));
+        section.getLessons().add(new Lesson(1,"Sample lesson", 4));
     }
 
     private void addSection(){
         Scanner scanner = new Scanner(System.in);
+        System.out.print("Section Number : ");
+        int sectionNo = scanner.nextInt();
         System.out.print("Section Title : ");
         String title = scanner.nextLine();
-        Section section = new Section(title);
+        Section section = new Section(sectionNo,title);
         courses.get(0).addSection(section);
         addSampleLesson(section.getID());
         System.out.println("New section added successfully\n");

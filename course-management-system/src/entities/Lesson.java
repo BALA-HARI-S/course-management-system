@@ -1,23 +1,22 @@
 package entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Lesson {
     private static int LAST_ASSIGNED_ID = 0;
-    private int id;
+    private int staticID;
+    private int lessonNO;
     private String title;
     private int duration;
 
 
-    public Lesson(String title, int duration) {
-        this.id = ++LAST_ASSIGNED_ID;
+    public Lesson(int lessonNO, String title, int duration) {
+        this.staticID = ++LAST_ASSIGNED_ID;
+        this.lessonNO = lessonNO;
         this.title = title;
         this.duration = duration;
     }
 
     public int getID() {
-        return id;
+        return staticID;
     }
     public String getTitle() {
         return title;
@@ -30,7 +29,7 @@ public class Lesson {
     public int getDuration() { return duration; }
     @Override
     public String toString(){
-        return "Lesson " + id + " - " + title;
+        return "Lesson " + staticID + " - " + title;
 
     }
 

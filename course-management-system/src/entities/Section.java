@@ -6,18 +6,20 @@ import java.util.List;
 public class Section {
 
     private static int LAST_ASSIGNED_ID = 0;
-    private int id;
+    private int staticID;
+    private int sectionNo;
     private String title;
     private List<Lesson> lessons;
 
-    public Section(String title) {
-        this.id = ++LAST_ASSIGNED_ID;
+    public Section(int sectionNo, String title) {
+        this.staticID = ++LAST_ASSIGNED_ID;
+        this.sectionNo = sectionNo;
         this.title = title;
         this.lessons = new ArrayList<Lesson>();
     }
 
     public int getID() {
-        return id;
+        return staticID;
     }
     public String getTitle() {
         return title;
@@ -37,7 +39,7 @@ public class Section {
 
     @Override
     public String toString() {
-        return "Section " + id + " - " + title;
+        return "Section " + staticID + " - " + title;
     }
 }
 
