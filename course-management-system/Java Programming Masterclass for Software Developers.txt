@@ -1,4 +1,4 @@
-Course Java Programming Masterclass for Software Developers
+Course  - Java Programming Masterclass for Software Developers
 	Section 1 - Course Introduction
 		Lesson 1 - Introduction to the course
 		Lesson 2 - Remaster in progress

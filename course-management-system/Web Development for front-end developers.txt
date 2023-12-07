@@ -1,4 +1,4 @@
-Course Web Development for front-end developers
+Course  - Web Development for front-end developers
 	Section 1 - Course Introduction
 		Lesson 1 - Introduction to the course
 		Lesson 2 - Remaster in progress
