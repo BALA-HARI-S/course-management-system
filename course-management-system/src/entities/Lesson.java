@@ -1,16 +1,13 @@
 package entities;
 
 public class Lesson {
-    private static int LAST_ASSIGNED_ID = 0;
-    private int staticID;
     private int lessonID;
     private String title;
     private int duration;
 
 
-    public Lesson(int lessonNO, String title, int duration) {
-        this.staticID = ++LAST_ASSIGNED_ID;
-        this.lessonID = lessonNO;
+    public Lesson(int lessonID, String title, int duration) {
+        this.lessonID = lessonID;
         this.title = title;
         this.duration = duration;
     }

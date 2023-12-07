@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Course {
-    private static int LAST_ASSIGNED_ID = 0;
-    private int staticID;
-    private int courseNo;
+    private int courseID;
     private String title;
     private String authorName;
     private String datePublished;
@@ -14,9 +12,8 @@ public class Course {
     private double rating;
     private List<Section> sections;
 
-    public Course(int courseNo, String title, String authorName, String datePublished, double cost, double rating) {
-        this.staticID = ++LAST_ASSIGNED_ID;
-        this.courseNo = courseNo;
+    public Course(int courseID, String title, String authorName, String datePublished, double cost, double rating) {
+        this.courseID = courseID;
         this.title = title;
         this.authorName = authorName;
         this.datePublished = datePublished;
@@ -25,6 +22,9 @@ public class Course {
         this.sections = new ArrayList<Section>();
     }
 
+    public int getID() {
+        return courseID;
+    }
     public String getTitle() {
         return title;
     }

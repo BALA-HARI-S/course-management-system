@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Section {
-
-    private static int LAST_ASSIGNED_ID = 0;
-    private int staticID;
     private int sectionID;
     private String title;
     private List<Lesson> lessons;
 
-    public Section(int sectionNo, String title) {
-        this.staticID = ++LAST_ASSIGNED_ID;
-        this.sectionID = sectionNo;
+    public Section(int sectionID, String title) {
+        this.sectionID = sectionID;
         this.title = title;
         this.lessons = new ArrayList<Lesson>();
     }
