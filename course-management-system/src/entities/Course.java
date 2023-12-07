@@ -41,5 +41,4 @@ public class Course {
         sections.add(section);
     }
 
-
 }

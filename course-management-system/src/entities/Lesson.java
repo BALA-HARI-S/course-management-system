@@ -3,20 +3,20 @@ package entities;
 public class Lesson {
     private static int LAST_ASSIGNED_ID = 0;
     private int staticID;
-    private int lessonNO;
+    private int lessonID;
     private String title;
     private int duration;
 
 
     public Lesson(int lessonNO, String title, int duration) {
         this.staticID = ++LAST_ASSIGNED_ID;
-        this.lessonNO = lessonNO;
+        this.lessonID = lessonNO;
         this.title = title;
         this.duration = duration;
     }
 
     public int getID() {
-        return staticID;
+        return lessonID;
     }
     public String getTitle() {
         return title;
@@ -27,11 +27,6 @@ public class Lesson {
     }
 
     public int getDuration() { return duration; }
-    @Override
-    public String toString(){
-        return "Lesson " + staticID + " - " + title;
-
-    }
 
 }
 

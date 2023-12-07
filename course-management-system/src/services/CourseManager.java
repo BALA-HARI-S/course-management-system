@@ -3,6 +3,7 @@ package services;
 import entities.Course;
 import entities.Lesson;
 import entities.Section;
+import utilities.CourseFileHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,8 @@ public class CourseManager {
         jvm.addSection(section2);
         section2.addLesson(lesson3);
         section2.addLesson(lesson4);
+        CourseFileHandler fileHandler = new CourseFileHandler();
+        fileHandler.writeCourse(jvm);
     }
 
     private void printActions(){
@@ -149,11 +152,11 @@ public class CourseManager {
 
     private void printCourse() {
         for(Course course: courses){
-            System.out.println("Course - " + course.getTitle());
+            System.out.println( "Course - " + course.getTitle());
             for(Section s: course.getSections()){
-                System.out.println("\t" + s);
+                System.out.println( "\t" + s);
                 for(Lesson l:  s.getLessons()){
-                    System.out.println("\t\t" + l +
+                    System.out.println( "\t\t" + l +
                             " (" + l.getDuration() + " mins)");
                 }
             }
