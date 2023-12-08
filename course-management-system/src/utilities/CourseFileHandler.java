@@ -42,23 +42,21 @@ public class CourseFileHandler {
     }
 
     public void readCourse(String fileReadOption) {
-        Path path = Paths.get(".");
-        try (var filesPath = Files.newDirectoryStream(path, "*.txt")) {
-
-            List<Path> filePaths = new ArrayList<>();
-            filesPath.forEach(filePaths::add);
+        try {
+            List<Path> pathsOfFiles = listCourseFiles(Paths.get("."));
             List<String> lines = new ArrayList<>();
 
             if (fileReadOption.equalsIgnoreCase("all")) {
-                for (Path p : filePaths) {
+                for (Path p : pathsOfFiles) {
                     lines = Files.readAllLines(p);
                     System.out.println("Read course from File : " + p.getFileName());
                     lines.forEach(System.out::println);
+                    System.out.println();
                 }
             } else if (Character.isDigit(fileReadOption.charAt(0))) {
                 int intOption = Integer.parseInt(fileReadOption);
-                lines = Files.readAllLines(filePaths.get(intOption - 1));
-                System.out.println("Read course from File : " + filePaths.get(intOption - 1).getFileName());
+                lines = Files.readAllLines(pathsOfFiles.get(intOption - 1));
+                System.out.println("Read course from File : " + pathsOfFiles.get(intOption - 1).getFileName());
                 lines.forEach(System.out::println);
             } else {
                 lines = Files.readAllLines(Path.of(fileReadOption));
@@ -67,6 +65,26 @@ public class CourseFileHandler {
 
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public List<Path> listCourseFiles(Path path) {
+        try (var paths = Files.newDirectoryStream(path, "*.txt")) {
+            List<Path> pathsOfFiles = new ArrayList<>();
+            paths.forEach(pathsOfFiles::add);
+            return pathsOfFiles;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean removeCourseFile(Path path) {
+        try {
+            Files.delete(path);
+            return true;
+        } catch (IOException e) {
+//            throw new RuntimeException(e);
+            return false;
         }
     }
 }

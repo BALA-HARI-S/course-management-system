@@ -50,11 +50,19 @@ public class CourseManager {
         writeCourseToFile(webDevelopment);
     }
 
+    public List<Course> getCourseList() {
+        return courses;
+    }
+
+    public List<Path> getListOfCourseFiles(Path path) {
+        return fileHandler.listCourseFiles(path);
+    }
+
     public Course createNewCourse(int id, String title, String authorName,
                                   String datePublished, double cost, double rating, String writeOption) {
         Course course = new Course(id, title, authorName,
                 datePublished, cost, rating);
-        courses.add(course);
+        getCourseList().add(course);
         if (writeOption.toLowerCase().charAt(0) == 'y') {
             writeCourseToFile(course);
         }
@@ -62,10 +70,18 @@ public class CourseManager {
         return course;
     }
 
-    public List<Course> getCourseList() {
-        return courses;
+    public void removeCourseFromList(int courseID) {
+        for (Course course : getCourseList()) {
+            if (courseID == course.getID()) {
+                getCourseList().remove(courseID);
+                return;
+            }
+        }
     }
 
+    public boolean removeCourseFile(Path path) {
+        return fileHandler.removeCourseFile(path);
+    }
 
     public Path writeCourseToFile(Course course) {
         Path coursePath = fileHandler.writeCourse(course);
@@ -78,7 +94,7 @@ public class CourseManager {
 
 
     private void addSampleLesson(int sectionID) {
-        Section section = courses.get(0).getSections().get(sectionID - 1);
+        Section section = getCourseList().get(0).getSections().get(sectionID - 1);
         section.getLessons().add(new Lesson(1, "Sample lesson", 4));
     }
 
@@ -89,7 +105,7 @@ public class CourseManager {
         System.out.print("Section Title : ");
         String title = scanner.nextLine();
         Section section = new Section(sectionNo, title);
-        courses.get(0).addSection(section);
+        getCourseList().get(0).addSection(section);
         addSampleLesson(section.getID());
         System.out.println("New section added successfully\n");
         scanner.close();
@@ -111,13 +127,13 @@ public class CourseManager {
         System.out.println("\nList of Sections");
 
         // List sections to choose one from to add lesson
-        for (Section section : courses.get(0).getSections()) {
+        for (Section section : getCourseList().get(0).getSections()) {
             System.out.println("\t" + section);
         }
 
         System.out.print("Select a section(No) : ");
         int sectionID = scanner.nextInt();
-        Section section = courses.get(0).getSections().get(sectionID - 1);
+        Section section = getCourseList().get(0).getSections().get(sectionID - 1);
         section.getLessons().add(new Lesson(lessonNo, title, duration));
         System.out.println("New lesson added successfully\n");
         scanner.close();
@@ -127,7 +143,7 @@ public class CourseManager {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Select lesson(ID): ");
         int id = scanner.nextInt();
-        for (Section section : courses.get(0).getSections()) {
+        for (Section section : getCourseList().get(0).getSections()) {
             for (Lesson lesson : section.getLessons()) {
                 if (lesson.getID() == id) {
                     section.getLessons().remove(lesson);

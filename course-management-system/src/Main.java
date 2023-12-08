@@ -1,10 +1,9 @@
 import entities.Course;
 import services.CourseManager;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -23,6 +22,8 @@ public class Main {
             System.out.print("How can I help you (Choose any option): ");
             int option = scanner.nextInt();
 
+            final Path path1 = Paths.get(".");
+            final List<Path> pathsOfFiles = manager.getListOfCourseFiles(path1);
             switch (option) {
                 case 0 -> flag = false;
                 case 1 -> {
@@ -34,15 +35,10 @@ public class Main {
                 }
                 case 2 -> {
                     System.out.println("Operation : Read course from file");
-                    Path path = Paths.get(".");
-                    try (var filePaths = Files.newDirectoryStream(path, "*.txt")) {
-                        int id = 1;
-                        for (Path filePath : filePaths) {
-                            System.out.printf("\t%d %s%n", id, filePath.getFileName());
-                            id++;
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                    int id = 1;
+                    for (Path filePath : pathsOfFiles) {
+                        System.out.printf("\t%d %s%n", id, filePath.getFileName());
+                        id++;
                     }
                     scanner.nextLine();
                     System.out.print("\nWhich course do you want to read : ");
@@ -78,9 +74,47 @@ public class Main {
                     Course course = manager.createNewCourse(id, title, authorName, publishDate, price, rating, writeOption);
                     System.out.println("New Course created ' " + course.getTitle() + " '");
                 }
-                case 6 -> {
-                    System.out.println("Operation : List available courses");
+                case 4 -> {
+                    System.out.println("Operation : Remove course from list");
                     manager.getCourseList().forEach(c -> System.out.printf("\t%d %s%n", c.getID(), c.getTitle()));
+                    System.out.print("\nChoose course to remove from list : ");
+                    int i = scanner.nextInt();
+                    manager.removeCourseFromList(i - 1);
+                }
+                case 5 -> {
+                    System.out.println("Operation : Remove course file");
+                    int id = 1;
+                    for (Path filePath : pathsOfFiles) {
+                        System.out.printf("\t%d %s%n", id, filePath.getFileName());
+                        id++;
+                    }
+                    System.out.println("Which course file do you want delete?(No) : ");
+                    int i = scanner.nextInt();
+                    System.out.println(manager.removeCourseFile(pathsOfFiles.get(i - 1)) ?
+                            "Course file successfully removed!" : "There was problem occurred when removing course file!");
+                }
+                case 6 -> {
+                    System.out.println("Operation : Edit course name");
+                    manager.getCourseList().forEach(c -> System.out.printf("\t%d %s%n", c.getID(), c.getTitle()));
+                    System.out.print("\nChoose course from list to change it's name : ");
+                    int i = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Enter new name for the course : ");
+                    String title = scanner.nextLine();
+                    manager.getCourseList().get(i - 1).setTitle(title);
+                }
+                case 7 -> {
+                    System.out.println("Operation : List available courses");
+                    int courseId = 1;
+                    for (Course course : manager.getCourseList()) {
+                        System.out.printf("\t%d %s%n", courseId, course.getTitle());
+                        courseId++;
+                    }
+                }
+                case 8 -> {
+                    System.out.println("Operation : Total number of courses");
+                    System.out.printf("Number of Courses in List : %d%nNumber of Course Files: %d",
+                            manager.getCourseList().size(), manager.getListOfCourseFiles(path1).size());
                 }
                 default -> System.out.println("INVALID_VALUE, Choose correct option!!!");
             }
@@ -96,15 +130,16 @@ public class Main {
                 1) Write course to file
                 2) Read course from file
                 3) Add course
-                4) Remove course
-                5) Edit Course name
-                6) List courses
-                7) Total number of course
+                4) Remove course from list
+                5) Remove course file
+                6) Edit Course name
+                7) List courses
+                8) Total number of course
                                 
                 SECTION OPERATIONS
-                8) Add Section
-                9) Remove Section
-                10) Edit Section name
+                9) Add Section
+                10) Remove Section
+                11) Edit Section name
                 Press 0 to exit()
                 """;
         System.out.println(textBlock);
