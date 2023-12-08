@@ -2,6 +2,8 @@ Course  - Web Development for front-end developers
 	Section 1 - Course Introduction
 		Lesson 1 - Introduction to the course
 		Lesson 2 - Remaster in progress
+		Lesson 3 - Introduction to the HTML,CSS,JS
+		Lesson 4 - Remaster in progress
 	Section 2 - VS code Setup
-		Lesson 1 - VS code Installation
-		Lesson 2 - Remaster in progress
+		Lesson 5 - VS code Installation
+		Lesson 6 - Remaster in progress
