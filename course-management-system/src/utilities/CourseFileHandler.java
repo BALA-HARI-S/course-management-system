@@ -31,7 +31,8 @@ public class CourseFileHandler {
                 writer.write("\tSection " + section.getID() + " - " + section.getTitle());
                 writer.newLine();
                 for (Lesson lesson : section.getLessons()) {
-                    writer.write("\t\tLesson " + lesson.getID() + " - " + lesson.getTitle());
+                    writer.write("\t\tLesson " + lesson.getID() + " - " +
+                            lesson.getTitle() + "(" + lesson.getDuration() + ")");
                     writer.newLine();
                 }
             }

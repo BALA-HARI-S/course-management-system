@@ -1,7 +1,7 @@
 Course  - Java Programming Masterclass for Software Developers
 	Section 1 - Course Introduction
-		Lesson 1 - Introduction to the course
-		Lesson 2 - Remaster in progress
+		Lesson 1 - Introduction to the course(2)
+		Lesson 2 - Remaster in progress(10)
 	Section 2 - IntelliJ Setup
-		Lesson 3 - IntelliJ Installation
-		Lesson 4 - Remaster in progress
+		Lesson 3 - IntelliJ Installation(2)
+		Lesson 4 - Remaster in progress(3)
