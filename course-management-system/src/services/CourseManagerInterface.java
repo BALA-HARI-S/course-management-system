@@ -58,8 +58,9 @@ public interface CourseManagerInterface {
 
     Section getSectionWithMostLessons(int courseID);
 
+
     // LESSON OPERATIONS
-    Lesson addLesson(int courseID, int sectionID, int lessonID, String title, int duration);
+    Lesson addNewLesson(int courseID, int sectionID, int lessonID, String title, int duration, String type);
 
     boolean removeLesson(int courseID, int sectionID, int lessonID);
 

@@ -32,7 +32,7 @@ public class CourseFileHandler {
                 writer.newLine();
                 for (Lesson lesson : section.getLessons()) {
                     writer.write("\t\tLesson " + lesson.getID() + " - " +
-                            lesson.getTitle() + "(" + lesson.getDuration() + ")");
+                            lesson.getTitle() + " (" + lesson.getDuration() + ")" + " (" + lesson.getType() + ")");
                     writer.newLine();
                 }
             }

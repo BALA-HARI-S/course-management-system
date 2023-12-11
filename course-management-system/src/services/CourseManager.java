@@ -66,7 +66,7 @@ public class CourseManager implements CourseManagerInterface {
     public void removeCourseFromList(int courseID) {
         for (Course course : getListOfCourses()) {
             if (courseID == course.getID()) {
-                getListOfCourses().remove(courseID);
+                getListOfCourses().remove(courseID - 1);
                 return;
             }
         }
@@ -102,7 +102,7 @@ public class CourseManager implements CourseManagerInterface {
         for (Section section : course.getSections()) {
             System.out.printf("%n\tSection %d - %s", section.getID(), section.getTitle());
             for (Lesson lesson : section.getLessons()) {
-                System.out.printf("%n\t\tLesson %d - %s (%d mins)%n", lesson.getID(), lesson.getTitle(), lesson.getDuration());
+                System.out.printf("%n\t\tLesson %d - %s (%d mins) (%s)%n", lesson.getID(), lesson.getTitle(), lesson.getDuration(), lesson.getType());
             }
         }
     }
@@ -116,7 +116,7 @@ public class CourseManager implements CourseManagerInterface {
 
     public boolean removeSection(int courseID, int sectionID) {
         var sections = getListOfCourses().get(courseID - 1).getSections();
-        if (sections.remove(sections.get(sectionID))) {
+        if (sections.remove(sections.get(sectionID - 1))) {
             return true;
         }
         return false;
