@@ -1,3 +1,0 @@
-Course  - python masterclass
-	Section 1 - introduction
-		Lesson 1 - introduction to python (5) (THEORY)

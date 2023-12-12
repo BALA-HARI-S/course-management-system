@@ -5,20 +5,27 @@ enum LessonType {
 }
 
 public class Lesson {
-    private int lessonID;
+    private static int NEXT_ID = 0;
+    private int id;
+    private int lessonId;
     private String title;
     private int duration;
     private LessonType type;
 
-    public Lesson(int lessonID, String title, int duration, LessonType type) {
-        this.lessonID = lessonID;
+    public Lesson(int lessonId, String title, int duration, LessonType type) {
+        this.id = NEXT_ID++;
+        this.lessonId = lessonId;
         this.title = title;
         this.duration = duration;
         this.type = type;
     }
 
-    public int getID() {
-        return lessonID;
+    public int getId() {
+        return id;
+    }
+
+    public int getLessonId() {
+        return lessonId;
     }
 
     public String getTitle() {

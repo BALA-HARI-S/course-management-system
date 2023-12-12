@@ -13,38 +13,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseFileHandler {
-    public Path writeCourse(Course course) {
-        String filename = course.getTitle() + ".txt";
-        Path path = Paths.get(filename);
-        if (!Files.exists(path)) {
+    public void writeCourse(Course course, String title, String extension) {
+        String filename = title + extension;
+        Path rootDirectory = Paths.get(".");
+        String subdirectory = "courses";
+        Path directoryPath = rootDirectory.resolve(subdirectory);
+
+        // Check if the directory exists; create it if it doesn't
+        if (!Files.exists(directoryPath)) {
             try {
-                Files.createFile(path);
+                Files.createDirectories(directoryPath);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
-            writer.write("Course " + " - " + course.getTitle());
+        Path filePath = directoryPath.resolve(filename);
+
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
+            writer.write("Course %d - %s".formatted(course.getCourseId(), course.getTitle()));
             writer.newLine();
             for (Section section : course.getSections()) {
-                writer.write("\tSection " + section.getID() + " - " + section.getTitle());
+                writer.write("\tSection %d - %s".formatted(section.getSectionId(), section.getTitle()));
                 writer.newLine();
                 for (Lesson lesson : section.getLessons()) {
-                    writer.write("\t\tLesson " + lesson.getID() + " - " +
-                            lesson.getTitle() + " (" + lesson.getDuration() + ")" + " (" + lesson.getType() + ")");
+                    writer.write("\t\tLesson %d - %s (%d min) (%s)".formatted(lesson.getLessonId(),
+                            lesson.getTitle(), lesson.getDuration(), lesson.getType()));
                     writer.newLine();
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return path;
     }
 
     public void readCourse(String fileReadOption) {
+        Path rootDirectory = Path.of(".");
+        String subdirectoryName = "courses";
+        Path courseDirectoryPath = rootDirectory.resolve(subdirectoryName);
         try {
-            List<Path> pathsOfFiles = listCourseFiles(Paths.get("."));
+            List<Path> pathsOfFiles = listCourseFiles(courseDirectoryPath);
             List<String> lines = new ArrayList<>();
 
             if (fileReadOption.equalsIgnoreCase("all")) {

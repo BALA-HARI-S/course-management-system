@@ -4,19 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Section {
-    private int sectionID;
+    private static int NEXT_ID = 0;
+    private int id;
+    private int sectionId;
     private String title;
     private List<Lesson> lessons;
 
-    public Section(int sectionID, String title) {
-        this.sectionID = sectionID;
+    public Section(int sectionId, String title) {
+        this.id = NEXT_ID++;
+        this.sectionId = sectionId;
         this.title = title;
         this.lessons = new ArrayList<Lesson>();
     }
 
-    public int getID() {
-        return sectionID;
+    public int getId() {
+        return id;
     }
+
+    public int getSectionId() {
+        return sectionId;
+    }
+
     public String getTitle() {
         return title;
     }
