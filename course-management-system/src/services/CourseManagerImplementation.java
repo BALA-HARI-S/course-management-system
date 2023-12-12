@@ -88,7 +88,10 @@ public class CourseManagerImplementation implements CourseManager {
     }
 
     public int getCourseFilesCount() {
-        return getListOfCourseFiles(Paths.get(".")).size();
+        Path rootDirectory = Path.of(".");
+        String subdirectoryName = "courses";
+        Path courseDirectoryPath = rootDirectory.resolve(subdirectoryName);
+        return getListOfCourseFiles(courseDirectoryPath).size();
     }
 
     public void editCourseName(int courseId, String title) {
@@ -101,11 +104,11 @@ public class CourseManagerImplementation implements CourseManager {
     }
 
     public void printCourse(Course course) {
-        System.out.printf("Course %d - %s", course.getId(), course.getTitle());
+        System.out.printf("Course %d - %s%n", course.getCourseId(), course.getTitle());
         for (Section section : course.getSections()) {
-            System.out.printf("%n\tSection %d - %s", section.getId(), section.getTitle());
+            System.out.printf("\tSection %d - %s%n", section.getSectionId(), section.getTitle());
             for (Lesson lesson : section.getLessons()) {
-                System.out.printf("%n\t\tLesson %d - %s (%d mins) (%s)%n", lesson.getId(), lesson.getTitle(), lesson.getDuration(), lesson.getType());
+                System.out.printf("\t\tLesson %d - %s (%d mins) (%s)%n", lesson.getLessonId(), lesson.getTitle(), lesson.getDuration(), lesson.getType());
             }
         }
     }

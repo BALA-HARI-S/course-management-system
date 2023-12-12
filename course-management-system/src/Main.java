@@ -1,5 +1,4 @@
 import entities.Lesson;
-import entities.Section;
 import services.CourseManagerImplementation;
 
 import java.nio.file.Path;
@@ -232,7 +231,7 @@ public class Main {
                         id++;
                     }
                     scanner.nextLine();
-                    System.out.print("Which course do you want to read?(all/No./FileName) : ");
+                    System.out.print("Which course do you want to read a file?(all/No./FileName) : ");
                     String readOption = scanner.nextLine();
                     courseManager.readCourseFromFile(readOption);
 
@@ -240,88 +239,70 @@ public class Main {
                 case 9 -> {
                     System.out.println("Section Operation : Add new section to course");
                     System.out.print("Section ID : ");
-                    int sectionID = scanner.nextInt();
+                    int sectionId = scanner.nextInt();
                     scanner.nextLine();
                     System.out.print("Section Title : ");
                     String sectionTitle = scanner.nextLine();
-                    int i = getCourseId("Choose course from list to add section : ");
-                    scanner.nextLine();
-                    courseManager.addNewSection(i, sectionID, sectionTitle);
+                    int courseId = getCourseId("Choose course from list to add a section : ");
+                    courseManager.addNewSection(courseId, sectionId, sectionTitle);
                 }
                 case 10 -> {
                     System.out.println("Section Operation : Remove section from course");
-                    int courseID = getCourseId("From which course do you want to remove section? Course(No.) : ");
-                    System.out.println("Sections available in " + courseManager.getCourses().get(courseID - 1).getTitle());
-                    int sectionId = 1;
-                    for (Section section : courseManager.getSections(courseID)) {
-                        System.out.printf("\tSection %d %s%n", sectionId, section.getTitle());
-                        sectionId++;
-                    }
-                    System.out.println("Select section(No.) to remove : ");
-                    int sectionID = scanner.nextInt();
-                    courseManager.removeSection(courseID, sectionID);
+                    int courseId = getCourseId("From which course do you want to remove a section? Course(No.) : ");
+                    System.out.println("Sections available in " + courseManager.getCourse(courseId).getTitle());
+                    int sectionId = getSectionId(courseId, "Select section(No.) to remove : ");
+                    courseManager.removeSection(courseId, sectionId);
                     System.out.println("Section successfully removed from course. Available sections");
 
-                    for (Section section : courseManager.getSections(courseID)) {
-                        System.out.printf("\tSection %d %s%n", section.getSectionId(), section.getTitle());
-                    }
+                    courseManager.getSections(courseId).forEach(section ->
+                            System.out.printf("\tSection %d - %s%n", section.getSectionId(), section.getTitle()));
                 }
                 case 11 -> {
                     System.out.println("Section Operation : Edit section name");
-                    int courseID = getCourseId("From which course do you want to rename section? Course(No.) : ");
-                    System.out.println("Sections available in " + courseManager.getCourses().get(courseID - 1).getTitle());
-                    int sectionId = 1;
-                    for (Section section : courseManager.getSections(courseID)) {
-                        System.out.printf("\tSection %d %s%n", sectionId, section.getTitle());
-                        sectionId++;
-                    }
-                    System.out.println("Select section(No.) to rename : ");
-                    int sectionID = scanner.nextInt();
+                    int courseId = getCourseId("From which course do you want to rename section? Course(No.) : ");
+                    System.out.println("Sections available in " + courseManager.getCourse(courseId).getTitle());
+                    int sectionId = getSectionId(courseId, "Select section(No.) to rename : ");
                     scanner.nextLine();
                     System.out.println("Enter new section name : ");
                     String title = scanner.nextLine();
-                    courseManager.editSectionName(courseID, sectionID, title);
+                    courseManager.editSectionName(courseId, sectionId, title);
                     System.out.println("Course name successfully changed to " + title);
 
                 }
                 case 12 -> {
-                    System.out.println("Section Operation : List available sections");
-                    int courseID = getCourseId("List sections from course(No.) : ");
-                    scanner.nextLine();
-                    int id = 1;
-                    for (Section section : courseManager.getSections(courseID)) {
-                        System.out.printf("\tSection %d %s%n", id, section.getTitle());
-                        id++;
-                    }
+                    System.out.println("Section Operation : Sections List");
+                    int courseId = getCourseId("List sections from course(No.) : ");
+                    courseManager.getSections(courseId).forEach(section ->
+                            System.out.printf("\tSection %d - %s%n", section.getSectionId(), section.getTitle()));
                 }
                 case 13 -> {
                     System.out.println("Section Operation : Total number of sections in a course");
-                    int courseID = getCourseId("From which course do you want to count sections? Course(No.) : ");
-                    System.out.printf("Total number of sections in %s is : %d",
-                            courseManager.getCourses().get(courseID - 1).getTitle(), courseManager.getSectionsCount(courseID));
+                    int courseId = getCourseId("From which course do you want to count sections? Course(No.) : ");
+                    System.out.printf("Total number of sections in %s is : %d%n",
+                            courseManager.getCourses().get(courseId - 1).getTitle(), courseManager.getSectionsCount(courseId));
                 }
                 case 14 -> {
                     System.out.println("Section Operation : Shortest section based on lesson duration");
                     System.out.println("Choose course to filter shortest section");
-                    int courseID = getCourseId("Choose course(No.) : ");
-                    var section = courseManager.getShortestSection(courseID);
-                    System.out.println("Shortest section in Course : " + courseManager.getCourses().get(courseID).getTitle());
+                    int courseId = getCourseId("Choose course(No.) : ");
+                    var section = courseManager.getShortestSection(courseId);
+                    System.out.println("Shortest section in Course : " + courseManager.getCourses().get(courseId).getTitle());
                     System.out.printf("\tSection %d - %s", section.getSectionId(), section.getTitle());
                 }
                 case 15 -> {
                     System.out.println("Section Operation : Longest section based on lesson duration");
                     System.out.println("Choose course to filter Longest section");
-                    int courseID = getCourseId("Choose course(No.) : ");
-                    var section = courseManager.getLongestSection(courseID);
-                    System.out.println("Shortest section in Course : " + courseManager.getCourses().get(courseID).getTitle());
+                    int courseId = getCourseId("Choose course(No.) : ");
+                    var section = courseManager.getLongestSection(courseId);
+                    System.out.println("Shortest section in Course : " + courseManager.getCourses().get(courseId).getTitle());
                     System.out.printf("\tSection %d - %s", section.getSectionId(), section.getTitle());
                 }
                 case 16 -> {
                     System.out.println("Section Operation : Longest lesson in each section based on lesson duration");
                     System.out.println("Choose course to list longest lesson in each section");
-                    int courseID = getCourseId("Choose course(No.) to list lesson : ");
+                    int courseId = getCourseId("Choose course(No.) to list lesson : ");
                     System.out.println("Longest lessons in each section of this course : ");
-                    var lessons = courseManager.getLongestLesson(courseID);
+                    var lessons = courseManager.getLongestLesson(courseId);
                     int id = 1;
                     for (Lesson lesson : lessons) {
                         System.out.printf("\tSection %d : Lesson %d - %s (%d mins)%n",
@@ -349,37 +330,37 @@ public class Main {
                     System.out.println("Lesson Type (Theory/Coding) : ");
                     String lessonType = scanner.nextLine();
                     System.out.println("Choose course and section to add a lesson");
-                    int courseID = getCourseId("Choose course(No.) to add a lesson : ");
+                    int courseId = getCourseId("Choose course(No.) to add a lesson : ");
                     scanner.nextLine();
-                    int sectionID = getSectionId(courseID, "Choose section(No.) to add a lesson : ");
+                    int sectionId = getSectionId(courseId, "Choose section(No.) to add a lesson : ");
                     scanner.nextLine();
-                    courseManager.addNewLesson(courseID, sectionID, lessonID, title, duration, lessonType);
+                    courseManager.addNewLesson(courseId, sectionId, lessonID, title, duration, lessonType);
                 }
                 case 19 -> {
                     System.out.println("Lesson Operation : Remove lesson");
                     System.out.println("Choose course and section to remove a lesson");
-                    int courseID = getCourseId("Choose course(No.) to remove a lesson : ");
+                    int courseId = getCourseId("Choose course(No.) to remove a lesson : ");
                     scanner.nextLine();
-                    int sectionID = getSectionId(courseID, "Choose section(No.) to remove a lesson : ");
-                    System.out.println("Available lessons in this section : " + courseManager.getSections(courseID).get(sectionID - 1).getTitle());
-                    courseManager.getListOfLessonsFromSection(courseID, sectionID).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins)%n",
+                    int sectionId = getSectionId(courseId, "Choose section(No.) to remove a lesson : ");
+                    System.out.println("Available lessons in this section : " + courseManager.getSections(courseId).get(sectionId - 1).getTitle());
+                    courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration()));
                     scanner.nextLine();
                     System.out.println("Lesson ID : ");
                     int lessonID = scanner.nextInt();
-                    var isRemoved = courseManager.removeLesson(courseID, sectionID, lessonID);
+                    var isRemoved = courseManager.removeLesson(courseId, sectionId, lessonID);
                     System.out.println(isRemoved ? "Lesson successfully removed!" : "Cannot remove lesson!");
-                    courseManager.getListOfLessonsFromSection(courseID, sectionID).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
+                    courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
                 }
                 case 20 -> {
                     System.out.println("Lesson Operation : Edit lesson name");
                     System.out.println("Choose course and section to rename a lesson");
-                    int courseID = getCourseId("Choose course(No.) to rename a lesson : ");
+                    int courseId = getCourseId("Choose course(No.) to rename a lesson : ");
                     scanner.nextLine();
-                    int sectionID = getSectionId(courseID, "Choose section(No.) to rename a lesson : ");
-                    System.out.println("Available lessons in this section : " + courseManager.getSections(courseID).get(sectionID - 1).getTitle());
-                    courseManager.getListOfLessonsFromSection(courseID, sectionID).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
+                    int sectionId = getSectionId(courseId, "Choose section(No.) to rename a lesson : ");
+                    System.out.println("Available lessons in this section : " + courseManager.getSections(courseId).get(sectionId - 1).getTitle());
+                    courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
                     scanner.nextLine();
                     System.out.println("Which lesson do you want change the name : ");
@@ -387,36 +368,36 @@ public class Main {
                     scanner.nextLine();
                     System.out.println("New name : ");
                     String lessonName = scanner.nextLine();
-                    courseManager.editLessonName(courseID, sectionID, lessonID, lessonName);
+                    courseManager.editLessonName(courseId, sectionId, lessonID, lessonName);
                     System.out.println("Lesson name changed successfully!");
-                    courseManager.getListOfLessonsFromSection(courseID, sectionID).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
+                    courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
                 }
                 case 21 -> {
                     System.out.println("Lesson Operation : List lessons from particular section");
                     System.out.println("Choose course and section to list lessons");
-                    int courseID = getCourseId("Choose course(No.) to list lesson : ");
-                    int sectionID = getSectionId(courseID, "Choose section(No.) to list lesson : ");
-                    System.out.println("Available lessons in this section : " + courseManager.getSections(courseID).get(sectionID - 1).getTitle());
-                    courseManager.getListOfLessonsFromSection(courseID, sectionID).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
+                    int courseId = getCourseId("Choose course(No.) to list lesson : ");
+                    int sectionId = getSectionId(courseId, "Choose section(No.) to list lesson : ");
+                    System.out.println("Available lessons in this section : " + courseManager.getSections(courseId).get(sectionId - 1).getTitle());
+                    courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
                 }
                 case 22 -> {
                     System.out.println("Lesson Operation : List all lessons from course");
                     System.out.println("Choose course and section to list lessons");
-                    int courseID = getCourseId("Choose course(No.) to list lesson : ");
-                    courseManager.getListOfAllLessons(courseID).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
+                    int courseId = getCourseId("Choose course(No.) to list lesson : ");
+                    courseManager.getListOfAllLessons(courseId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
 
                 }
                 case 23 -> {
                     System.out.println("Lesson Operation : Lessons with same keyword");
                     System.out.println("Choose course to search for lesson with same keyword");
-                    int courseID = getCourseId("Choose course(No.) : ");
+                    int courseId = getCourseId("Choose course(No.) : ");
                     scanner.nextLine();
                     System.out.println("Enter a keyword to search : ");
                     String keyword = scanner.nextLine();
-                    var lessonsFound = courseManager.getLessonsWithSameKeyword(courseID, keyword);
+                    var lessonsFound = courseManager.getLessonsWithSameKeyword(courseId, keyword);
                     if (lessonsFound == null) {
                         System.out.println("No lessons found!");
                     } else {
@@ -426,8 +407,8 @@ public class Main {
                 }
                 case 24 -> {
                     System.out.println("Lesson Operation : Total number of lessons");
-                    int courseID = getCourseId("Choose course(No.) to count lessons : ");
-                    System.out.println("Total number of lessons in this course : " + courseManager.getLessonsCount(courseID));
+                    int courseId = getCourseId("Choose course(No.) to count lessons : ");
+                    System.out.println("Total number of lessons in this course : " + courseManager.getLessonsCount(courseId));
                 }
 
                 default -> System.out.println("INVALID_VALUE, Choose correct option!!!");
@@ -476,16 +457,16 @@ public class Main {
     private static int getCourseId(String message) {
         int id = 1;
         courseManager.getCourses().forEach(course ->
-                System.out.printf("\t%dCourse %d %s%n", course.getId(), course.getCourseId(), course.getTitle()));
-        System.out.println(message);
+                System.out.printf("\tCourse %d %s%n", course.getCourseId(), course.getTitle()));
+        System.out.print(message);
         int courseId = scanner.nextInt();
         return courseId;
     }
 
     private static int getSectionId(int courseId, String message) {
         courseManager.getSections(courseId).forEach(section ->
-                System.out.printf("/tSection %d - %s%n", section.getSectionId(), section.getTitle()));
-        System.out.println(message);
+                System.out.printf("\tSection %d - %s%n", section.getSectionId(), section.getTitle()));
+        System.out.print(message);
         int sectionId = scanner.nextInt();
         return sectionId;
     }
