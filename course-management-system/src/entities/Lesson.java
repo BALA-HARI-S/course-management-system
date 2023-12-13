@@ -1,9 +1,5 @@
 package entities;
 
-enum LessonType {
-    THEORY, CODING
-}
-
 public class Lesson {
     private static int NEXT_ID = 0;
     private int id;

@@ -18,7 +18,7 @@ public interface CourseManager {
     // COURSE OPERATIONS
 
     Course createCourse(int id, String title, String authorName,
-                        String datePublished, double cost, double rating);
+                        String datePublished, double cost);
 
     Course getCourse(int courseId);
 

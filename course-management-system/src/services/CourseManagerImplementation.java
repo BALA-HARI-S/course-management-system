@@ -6,6 +6,7 @@ import utilities.CourseFileHandler;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,8 +21,8 @@ public class CourseManagerImplementation implements CourseManager {
 
     // Load sample data for Course One
     public void loadSampleDataOne() {
-        var jvm = createCourse(1, "Java development master class for developers", "Tim", "12-12-2023",
-                200.00, 4.5);
+        var jvm = createCourse(1, "Java development master class for developers",
+                "Tim", "12-12-2023", 200.00);
         var section1 = addNewSection(jvm.getId(), 1, "Course Introduction");
         addNewLesson(jvm.getId(), section1.getId(), 1, "Introduction to the course", 2, "theory");
         addNewLesson(jvm.getId(), section1.getId(), 2, "Remaster in progress", 10, "coding");
@@ -34,8 +35,8 @@ public class CourseManagerImplementation implements CourseManager {
 
     // Load sample data for Course Two
     public void loadSampleDataTwo() {
-        var webDevelopment = createCourse(2, "Web Development for front-end developers", "Tim", "12-12-2023",
-                200.00, 4.5);
+        var webDevelopment = createCourse(2, "Web Development for front-end developers",
+                "Tim", "12-12-2023", 200.00);
         var section1 = addNewSection(webDevelopment.getId(), 1, "Course Introduction");
         addNewLesson(webDevelopment.getId(), section1.getId(), 1, "Introduction to the course", 2, "theory");
         addNewLesson(webDevelopment.getId(), section1.getId(), 2, "Remaster in progress", 10, "coding");
@@ -50,9 +51,25 @@ public class CourseManagerImplementation implements CourseManager {
 
     // Create a new course
     public Course createCourse(int courseId, String title, String authorName,
-                               String datePublished, double cost, double rating) {
+                               String datePublished, double cost) {
+        if (title == null || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
+            throw new IllegalArgumentException("Title must not be empty or start with a integer");
+        }
+        if (authorName == null || authorName.trim().isEmpty() || Character.isDigit(authorName.charAt(0))) {
+            throw new IllegalArgumentException("Author name must not be empty or start with a integer");
+        }
+        LocalDate localDate;
+        try {
+            localDate = LocalDate.parse(datePublished, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid date format. Please use dd-MM-yyyy");
+        }
+        if (cost < 0) {
+            throw new IllegalArgumentException("Cost must not be negative");
+        }
+
         Course course = new Course(courseId, title, authorName,
-                datePublished, cost, rating);
+                datePublished, cost);
         getCourses().add(course);
         return course;
     }
@@ -122,7 +139,10 @@ public class CourseManagerImplementation implements CourseManager {
         if (Files.exists(filePath)) {
             handleFileAlreadyExists(course);
         } else {
-            fileHandler.writeCourse(course, course.getTitle(), ".txt");
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+            String newTitle = String.join("-", course.getTitle().split(" ")) + "-" + currentDateTime.format(formatter);
+            fileHandler.writeCourse(course, newTitle, ".txt");
         }
 
     }
@@ -135,11 +155,14 @@ public class CourseManagerImplementation implements CourseManager {
         int userOption = scanner.nextInt();
 
         if (userOption == 1) {
-            fileHandler.writeCourse(course, course.getTitle(), ".txt");
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+            String newTitle = String.join("-", course.getTitle().split(" ")) + "-" + currentDateTime.format(formatter);
+            fileHandler.writeCourse(course, newTitle, ".txt");
         } else if (userOption == 2) {
             LocalDateTime currentDateTime = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
-            String newTitle = course.getTitle() + "-" + currentDateTime.format(formatter);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+            String newTitle = String.join("-", course.getTitle().split(" ")) + "-" + currentDateTime.format(formatter);
             fileHandler.writeCourse(course, newTitle, ".txt");
             System.out.println("Course successfully written to file in the name : " + newTitle + ".txt");
         } else {
@@ -155,6 +178,9 @@ public class CourseManagerImplementation implements CourseManager {
     // SECTION OPERATIONS
 
     public Section addNewSection(int courseId, int sectionId, String title) {
+        if (title == null || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
+            throw new IllegalArgumentException("Title must not be empty or start with a integer");
+        }
         var section = new Section(sectionId, title);
         getCourse(courseId).addSection(section);
         return section;
@@ -221,12 +247,24 @@ public class CourseManagerImplementation implements CourseManager {
     // LESSON OPERATIONS
     public Lesson addNewLesson(int courseId, int sectionId,
                                int lessonId, String title, int duration, String type) {
-        if (type.toLowerCase().charAt(0) == 't') {
-            Lesson lesson = new TheoryLesson(lessonId, title, duration);
-            getSection(courseId, sectionId).addLesson(lesson);
-            return lesson;
+        if (title == null || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
+            throw new IllegalArgumentException("Title must not be empty or start with a integer");
         }
-        Lesson lesson = new CodingLesson(lessonId, title, duration);
+        if (duration < 0) {
+            throw new IllegalArgumentException("Duration must not be negative");
+        }
+        LessonType lessonType;
+        try {
+            lessonType = LessonType.valueOf(type.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid lesson type. Supported types: THEORY, CODING");
+        }
+
+        Lesson lesson = switch (lessonType) {
+            case THEORY -> new TheoryLesson(lessonId, title, duration);
+            case CODING -> new CodingLesson(lessonId, title, duration);
+        };
+
         getSection(courseId, sectionId).addLesson(lesson);
         return lesson;
     }

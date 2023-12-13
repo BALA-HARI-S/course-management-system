@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Course {
     private static int NEXT_ID = 0;
@@ -16,15 +17,16 @@ public class Course {
     private double cost;
     private double rating;
     private List<Section> sections;
+    private Random random = new Random();
 
-    public Course(int courseId, String title, String authorName, String datePublished, double cost, double rating) {
+    public Course(int courseId, String title, String authorName, String datePublished, double cost) {
         this.id = ++NEXT_ID;
         this.courseId = courseId;
         this.title = title;
         this.authorName = authorName;
         this.datePublished = convertInstant(datePublished);
         this.cost = cost;
-        this.rating = rating;
+        this.rating = random.nextDouble() * 5;
         this.sections = new ArrayList<Section>();
     }
 

@@ -22,7 +22,7 @@ public class CourseManagerImplementationTest {
 
     @Test
     public void testCreateAndRemoveCourse() {
-        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0, 4.0);
+        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0);
         assertEquals(1, courseManagerImplementation.getCourseCount());
 
         courseManagerImplementation.removeCourseFromList(1);
@@ -31,7 +31,7 @@ public class CourseManagerImplementationTest {
 
     @Test
     public void testAddAndRemoveSection() {
-        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0, 4.0);
+        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0);
 
         Section section = courseManagerImplementation.addNewSection(1, 1, "Test Section");
         assertEquals(1, courseManagerImplementation.getSectionsCount(1));
@@ -42,7 +42,7 @@ public class CourseManagerImplementationTest {
 
     @Test
     public void testAddAndRemoveLesson() {
-        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0, 4.0);
+        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0);
         Section section = courseManagerImplementation.addNewSection(1, 1, "Test Section");
 
         Lesson theoryLesson = courseManagerImplementation.addNewLesson(1, 1, 1, "Theory Lesson", 30, "theory");
@@ -55,7 +55,7 @@ public class CourseManagerImplementationTest {
 
     @Test
     public void testGetLongestLesson() {
-        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0, 4.0);
+        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0);
         Section section = courseManagerImplementation.addNewSection(1, 1, "Test Section");
 
         Lesson theoryLesson1 = courseManagerImplementation.addNewLesson(1, 1, 1, "Theory Lesson 1", 30, "theory");

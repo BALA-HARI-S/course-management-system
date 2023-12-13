@@ -1,4 +1,6 @@
+import entities.Course;
 import entities.Lesson;
+import entities.Section;
 import services.CourseManagerImplementation;
 
 import java.nio.file.Path;
@@ -33,31 +35,33 @@ public class Main {
                     flag = false;
                 }
                 case 1 -> {
-                    System.out.print("Course Operation : Creating New Course\n");
-                    System.out.printf("Available courses : %d%n", courseManager.getCourseCount());
-                    courseManager.getCourses().forEach(c -> System.out.printf("\tCourse %d %s%n", c.getCourseId(), c.getTitle()));
-                    System.out.print("Course ID : ");
-                    int courseId = scanner.nextInt();
-                    scanner.nextLine();
+                    System.out.println("Course Operation : Creating New Course");
+                    Course newCourse = null;
+                    try {
+                        System.out.printf("Available courses : %d%n", courseManager.getCourseCount());
+                        courseManager.getCourses().forEach(c -> System.out.printf("\tCourse %d %s%n", c.getCourseId(), c.getTitle()));
+                        System.out.print("Course ID : ");
+                        int courseId = scanner.nextInt();
+                        scanner.nextLine();
 
-                    System.out.print("Course Title : ");
-                    String courseTitle = scanner.nextLine();
+                        System.out.print("Course Title : ");
+                        String courseTitle = scanner.nextLine();
 
-                    System.out.print("Course Author's Name : ");
-                    String authorName = scanner.nextLine();
+                        System.out.print("Course Author's Name : ");
+                        String authorName = scanner.nextLine();
 
-                    System.out.print("Course Publish date (dd-MM-yyyy): ");
-                    String publishDate = scanner.nextLine();
+                        System.out.print("Course Publish date (dd-MM-yyyy): ");
+                        String publishDate = scanner.nextLine();
 
-                    System.out.print("Course Price(₹) : ");
-                    double price = scanner.nextDouble();
+                        System.out.print("Course Price(₹) : ");
+                        double price = scanner.nextDouble();
 
-                    System.out.print("Course Rating : ");
-                    double rating = scanner.nextDouble();
-                    scanner.nextLine();
-
-                    var newCourse = courseManager.createCourse(courseId, courseTitle, authorName, publishDate, price, rating);
-                    System.out.printf("Course Created : Course %d - %s%n", newCourse.getCourseId(), newCourse.getTitle());
+                        newCourse = courseManager.createCourse(courseId, courseTitle, authorName, publishDate, price);
+                        System.out.printf("Course Created : Course %d - %s%n", newCourse.getCourseId(), newCourse.getTitle());
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Course creation FAILED! - " + e.getMessage());
+                        break;
+                    }
 
                     boolean sectionFlag = true;
                     do {
@@ -65,22 +69,28 @@ public class Main {
                         String addSectionOption = scanner.nextLine();
                         switch (addSectionOption) {
                             case "y" -> {
-                                System.out.printf("Adding a section to course '%s'%n", newCourse.getTitle());
-                                System.out.printf("Available sections : %d%n", courseManager.getSectionsCount(newCourse.getCourseId()));
-                                courseManager.getSections(courseId).forEach(section ->
-                                        System.out.printf("\tSection %d - %s%n", section.getSectionId(), section.getTitle()));
-                                System.out.print("Section Id : ");
-                                int sectionId = scanner.nextInt();
-                                scanner.nextLine();
-                                System.out.print("Section Title : ");
-                                String sectionTitle = scanner.nextLine();
+                                Section newSection = null;
+                                try {
+                                    System.out.printf("Adding a section to course '%s'%n", newCourse.getTitle());
+                                    System.out.printf("Available sections : %d%n", courseManager.getSectionsCount(newCourse.getCourseId()));
+                                    courseManager.getSections(newCourse.getCourseId()).forEach(section ->
+                                            System.out.printf("\tSection %d - %s%n", section.getSectionId(), section.getTitle()));
+                                    System.out.print("Section Id : ");
+                                    int sectionId = scanner.nextInt();
+                                    scanner.nextLine();
+                                    System.out.print("Section Title : ");
+                                    String sectionTitle = scanner.nextLine();
 
-                                var newSection = courseManager.addNewSection(newCourse.getId(), sectionId, sectionTitle);
-                                System.out.printf("Section successfully added : Section %d - %s%n", newSection.getSectionId(), newSection.getTitle());
-
+                                    newSection = courseManager.addNewSection(newCourse.getId(), sectionId, sectionTitle);
+                                    System.out.printf("Section successfully added : Section %d - %s%n", newSection.getSectionId(), newSection.getTitle());
+                                } catch (IllegalArgumentException e) {
+                                    System.out.println("Section creation FAILED! -  " + e.getMessage());
+                                    break;
+                                }
                                 boolean sectionOperationFlag = true;
                                 do {
                                     System.out.print("""
+                                                                                        
                                             1) Edit this section's name
                                             2) Remove this section
                                             3) Add Lessons
@@ -100,26 +110,33 @@ public class Main {
                                         case 2 -> {
                                             courseManager.removeSection(newCourse.getId(), newSection.getId());
                                             System.out.print("Section successfully removed");
+                                            sectionOperationFlag = false;
                                         }
                                         case 3 -> {
-                                            System.out.printf("Adding a lesson to 'Course - %d %s : Section %d - %s'%n", newCourse.getCourseId(),
-                                                    newCourse.getTitle(), newSection.getSectionId(), newSection.getTitle());
-                                            System.out.print("Lesson Id : ");
-                                            int lessonId = scanner.nextInt();
-                                            scanner.nextLine();
-                                            System.out.print("Lesson Title : ");
-                                            String lessonTitle = scanner.nextLine();
-                                            System.out.print("Lesson duration (Minutes) : ");
-                                            int duration = scanner.nextInt();
-                                            scanner.nextLine();
-                                            System.out.print("Lesson Type (Theory/Coding) : ");
-                                            String lessonType = scanner.nextLine();
-                                            var newLesson = courseManager.addNewLesson(newCourse.getId(), newSection.getId(), lessonId, lessonTitle, duration, lessonType);
-                                            System.out.printf("Lesson successfully added : Lesson %d - %s%n", newLesson.getLessonId(), newLesson.getTitle());
-
+                                            Lesson newLesson = null;
+                                            try {
+                                                System.out.printf("Adding a lesson to 'Course - %d %s : Section %d - %s'%n", newCourse.getCourseId(),
+                                                        newCourse.getTitle(), newSection.getSectionId(), newSection.getTitle());
+                                                System.out.print("Lesson Id : ");
+                                                int lessonId = scanner.nextInt();
+                                                scanner.nextLine();
+                                                System.out.print("Lesson Title : ");
+                                                String lessonTitle = scanner.nextLine();
+                                                System.out.print("Lesson duration (Minutes) : ");
+                                                int duration = scanner.nextInt();
+                                                scanner.nextLine();
+                                                System.out.print("Lesson Type (Theory/Coding) : ");
+                                                String lessonType = scanner.nextLine();
+                                                newLesson = courseManager.addNewLesson(newCourse.getId(), newSection.getId(), lessonId, lessonTitle, duration, lessonType);
+                                                System.out.printf("Lesson successfully added : Lesson %d - %s%n", newLesson.getLessonId(), newLesson.getTitle());
+                                            } catch (IllegalArgumentException e) {
+                                                System.out.println("Lesson creation FAILED! - " + e.getMessage());
+                                                break;
+                                            }
                                             boolean lessonOperationFlag = true;
                                             do {
                                                 System.out.print("""
+                                                                                                                
                                                         1) Edit this lesson's name
                                                         2) Remove this lesson
                                                         3) Skip
@@ -205,7 +222,7 @@ public class Main {
                     System.out.println("Course Operation : Read course from file");
                     int id = 1;
                     for (Path filePath : courseFilePaths) {
-                        System.out.printf("\tCourse %d %s%n", id, filePath.getFileName());
+                        System.out.printf("\t%d %s%n", id, filePath.getFileName());
                         id++;
                     }
                     scanner.nextLine();
@@ -220,18 +237,25 @@ public class Main {
                     System.out.printf("Available sections : %d%n", courseManager.getSectionsCount(courseId));
                     courseManager.getSections(courseId).forEach(section ->
                             System.out.printf("\tSection %d - %s%n", section.getSectionId(), section.getTitle()));
-                    System.out.print("Section ID : ");
-                    int sectionId = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Section Title : ");
-                    String sectionTitle = scanner.nextLine();
-                    var section = courseManager.addNewSection(courseId, sectionId, sectionTitle);
-                    System.out.printf("'Section %d - %s' successfully added %n", section.getSectionId(), section.getTitle());
+                    try {
+                        System.out.print("Section ID : ");
+                        int sectionId = scanner.nextInt();
+                        scanner.nextLine();
+                        System.out.print("Section Title : ");
+                        String sectionTitle = scanner.nextLine();
+                        var section = courseManager.addNewSection(courseId, sectionId, sectionTitle);
+                        System.out.printf("'Section %d - %s' successfully added %n", section.getSectionId(), section.getTitle());
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Section creation FAILED! - " + e.getMessage());
+                    }
+
                 }
                 case 9 -> {
                     System.out.println("Section Operation : Remove section from course");
                     int courseId = getCourseId("From which course do you want to remove a section? Course(No.) : ");
                     System.out.println("Sections available in " + courseManager.getCourse(courseId).getTitle());
+                    courseManager.getSections(courseId).forEach(section ->
+                            System.out.printf("\tSection %d - %s%n", section.getSectionId(), section.getTitle()));
                     int sectionId = getSectionId(courseId, "Select section(No.) to remove : ");
                     courseManager.removeSection(courseId, sectionId);
                     System.out.println("Section successfully removed from course. Available sections");
@@ -245,7 +269,7 @@ public class Main {
                     System.out.println("Sections available in " + courseManager.getCourse(courseId).getTitle());
                     int sectionId = getSectionId(courseId, "Select section(No.) to rename : ");
                     scanner.nextLine();
-                    System.out.println("Enter new section name : ");
+                    System.out.print("Enter new section name : ");
                     String title = scanner.nextLine();
                     courseManager.editSectionName(courseId, sectionId, title);
                     System.out.println("Course name successfully changed to " + title);
@@ -310,17 +334,21 @@ public class Main {
                             courseManager.getSection(courseId, sectionId).getLessons().size(), courseManager.getSection(courseId, sectionId).getTitle());
                     courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration()));
-                    System.out.print("Lesson ID : ");
-                    int lessonID = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Lesson Title : ");
-                    String title = scanner.nextLine();
-                    System.out.print("Lesson duration : ");
-                    int duration = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Lesson Type (Theory/Coding) : ");
-                    String lessonType = scanner.nextLine();
-                    courseManager.addNewLesson(courseId, sectionId, lessonID, title, duration, lessonType);
+                    try {
+                        System.out.print("Lesson ID : ");
+                        int lessonID = scanner.nextInt();
+                        scanner.nextLine();
+                        System.out.print("Lesson Title : ");
+                        String title = scanner.nextLine();
+                        System.out.print("Lesson duration : ");
+                        int duration = scanner.nextInt();
+                        scanner.nextLine();
+                        System.out.print("Lesson Type (Theory/Coding) : ");
+                        String lessonType = scanner.nextLine();
+                        courseManager.addNewLesson(courseId, sectionId, lessonID, title, duration, lessonType);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Lesson creation FAILED! - " + e.getMessage());
+                    }
                 }
                 case 18 -> {
                     System.out.println("Lesson Operation : Remove lesson");
@@ -404,6 +432,7 @@ public class Main {
 
     private static void printMenu() {
         String textBlock = """
+                                
                 COURSE OPERATIONS
                 1) Add course
                 2) Remove course
@@ -433,6 +462,7 @@ public class Main {
                 22) Lessons with same keyword
                 23) Total number of lessons
                 Press 0 to exit()
+                                
                 """;
         System.out.println(textBlock);
     }
