@@ -31,6 +31,9 @@ public class CourseFileHandler {
         Path filePath = directoryPath.resolve(filename);
 
         try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
+            writer.write("Author name - %s".formatted(course.getAuthorName()));
+            writer.write("Course price - %s".formatted(course.getCost()));
+            writer.newLine();
             writer.write("Course %d - %s".formatted(course.getCourseId(), course.getTitle()));
             writer.newLine();
             for (Section section : course.getSections()) {

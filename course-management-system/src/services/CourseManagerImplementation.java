@@ -3,16 +3,14 @@ package services;
 import entities.*;
 import utilities.CourseFileHandler;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class CourseManagerImplementation implements CourseManager {
     // datastore for handling courses
@@ -52,10 +50,10 @@ public class CourseManagerImplementation implements CourseManager {
     // Create a new course
     public Course createCourse(int courseId, String title, String authorName,
                                String datePublished, double cost) {
-        if (title == null || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
+        if (Objects.isNull(title) || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
             throw new IllegalArgumentException("Title must not be empty or start with a integer");
         }
-        if (authorName == null || authorName.trim().isEmpty() || Character.isDigit(authorName.charAt(0))) {
+        if (Objects.isNull(authorName) || authorName.trim().isEmpty() || Character.isDigit(authorName.charAt(0))) {
             throw new IllegalArgumentException("Author name must not be empty or start with a integer");
         }
         LocalDate localDate;
@@ -79,7 +77,8 @@ public class CourseManagerImplementation implements CourseManager {
         return getCourses().stream()
                 .filter(course -> course.getId() == courseId)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(NullPointerException::new);
+
     }
 
     public void removeCourseFromList(int courseId) {
@@ -110,12 +109,14 @@ public class CourseManagerImplementation implements CourseManager {
     }
 
     public void editCourseName(int courseId, String title) {
-        var course = getCourse(courseId);
-        if (course != null) {
-            course.setTitle(title);
-            return;
+        if (Objects.isNull(title) || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
+            throw new IllegalArgumentException("Title must not be empty or start with a integer");
         }
-        System.out.println("Course not found for the provided course ID.");
+        try {
+            getCourse(courseId).setTitle(title);
+        } catch (NullPointerException e) {
+            System.out.println("Course not found for the provided course ID.");
+        }
     }
 
     public void printCourse(Course course) {
@@ -129,7 +130,7 @@ public class CourseManagerImplementation implements CourseManager {
     }
 
     // Write a course to a file
-    public void writeCourseToFile(Course course) {
+    public void writeCourseToFile(Course course) throws FileAlreadyExistsException {
         String filename = course.getTitle() + ".txt";
         Path rootDirectory = Paths.get(".");
         String subdirectory = "courses";
@@ -137,7 +138,8 @@ public class CourseManagerImplementation implements CourseManager {
         Path filePath = directoryPath.resolve(filename);
 
         if (Files.exists(filePath)) {
-            handleFileAlreadyExists(course);
+            throw new FileAlreadyExistsException("File : " + filePath + "File already exist");
+
         } else {
             LocalDateTime currentDateTime = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
@@ -147,7 +149,7 @@ public class CourseManagerImplementation implements CourseManager {
 
     }
 
-    private void handleFileAlreadyExists(Course course) {
+    public void handleFileAlreadyExists(Course course) {
         Scanner scanner = new Scanner(System.in);
         String filename = course.getTitle();
 
@@ -195,16 +197,18 @@ public class CourseManagerImplementation implements CourseManager {
         return getCourse(courseId).getSections().stream()
                 .filter(section -> section.getId() == sectionId)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(NullPointerException::new);
     }
 
     public void editSectionName(int courseId, int sectionId, String title) {
-        var section = getSection(courseId, sectionId);
-        if (section != null) {
-            section.setTitle(title);
-            return;
+        if (Objects.isNull(title) || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
+            throw new IllegalArgumentException("Title must not be empty or start with a integer");
         }
-        System.out.println("Section not found for the provided section ID.");
+        try {
+            getSection(courseId, sectionId).setTitle(title);
+        } catch (NullPointerException e) {
+            System.out.println("Section not found! Provide correct section ID.");
+        }
     }
 
     public List<Section> getSections(int courseId) {
@@ -285,14 +289,21 @@ public class CourseManagerImplementation implements CourseManager {
     @Override
     public Lesson getLesson(int courseId, int sectionId, int lessonId) {
         return getSection(courseId, sectionId).getLessons().stream()
-                .filter(lesson -> lesson.getId() == lessonId)
+                .filter(lesson -> lesson.getLessonId() == lessonId)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(NullPointerException::new);
     }
 
     public void editLessonName(int courseId, int sectionId,
                                int lessonId, String title) {
-        getLesson(courseId, sectionId, lessonId).setTitle(title);
+        if (Objects.isNull(title) || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
+            throw new IllegalArgumentException("Title must not be empty or start with a integer");
+        }
+        try {
+            getLesson(courseId, sectionId, lessonId).setTitle(title);
+        } catch (NullPointerException e) {
+            System.out.println("Lesson not found! Provide correct lesson ID.");
+        }
     }
 
     public List<Lesson> getListOfAllLessons(int courseId) {

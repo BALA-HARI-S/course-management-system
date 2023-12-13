@@ -4,6 +4,7 @@ import entities.Course;
 import entities.Lesson;
 import entities.Section;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public interface CourseManager {
 
     void printCourse(Course course);
 
-    void writeCourseToFile(Course course);
+    void writeCourseToFile(Course course) throws FileAlreadyExistsException;
 
     void readCourseFromFile(String fileReadOption);
 
