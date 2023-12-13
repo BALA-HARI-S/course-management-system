@@ -190,9 +190,8 @@ public class Main {
                             c.getCourseId(), c.getTitle()));
                 }
                 case 5 -> {
-                    System.out.println("Course Operation : Total number of courses - both list and files");
-                    System.out.printf("Number of Courses in List : %d%nNumber of Course Files: %d%n",
-                            courseManager.getCourseCount(), courseManager.getCourseFilesCount());
+                    System.out.println("Course Operation : Total number of courses");
+                    System.out.printf("Total number of Courses : %d%n", courseManager.getCourseCount());
                 }
                 case 6 -> {
                     System.out.println("Course Operation : Write course to file");
