@@ -11,7 +11,7 @@ public class Section {
     private List<Lesson> lessons;
 
     public Section(int sectionId, String title) {
-        this.id = NEXT_ID++;
+        this.id = ++NEXT_ID;
         this.sectionId = sectionId;
         this.title = title;
         this.lessons = new ArrayList<Lesson>();

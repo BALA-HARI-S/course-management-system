@@ -6,6 +6,8 @@ import utilities.CourseFileHandler;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,20 +20,16 @@ public class CourseManagerImplementation implements CourseManager {
 
     // Load sample data for Course One
     public void loadSampleDataOne() {
-        Course jvm = createCourse(1, "Java Programming Masterclass for Software Developers", "Tim", "12-12-2023",
+        var jvm = createCourse(1, "Java development master class for developers", "Tim", "12-12-2023",
                 200.00, 4.5);
-        Lesson lesson1 = new TheoryLesson(1, "Introduction to the course", 2);
-        Lesson lesson2 = new CodingLesson(2, "Remaster in progress", 10);
-        Section section2 = new Section(2, "IntelliJ Setup");
-        Lesson lesson3 = new TheoryLesson(3, "IntelliJ Installation", 2);
-        Lesson lesson4 = new CodingLesson(4, "Remaster in progress", 3);
-        Section section1 = new Section(1, "Course Introduction");
-        jvm.addSection(section1);
-        section1.addLesson(lesson1);
-        section1.addLesson(lesson2);
-        jvm.addSection(section2);
-        section2.addLesson(lesson3);
-        section2.addLesson(lesson4);
+        var section1 = addNewSection(jvm.getId(), 1, "Course Introduction");
+        addNewLesson(jvm.getId(), section1.getId(), 1, "Introduction to the course", 2, "theory");
+        addNewLesson(jvm.getId(), section1.getId(), 2, "Remaster in progress", 10, "coding");
+        addNewLesson(jvm.getId(), section1.getId(), 3, "Introduction to the java", 2, "theory");
+        addNewLesson(jvm.getId(), section1.getId(), 4, "Remaster in progress", 10, "coding");
+        var section2 = addNewSection(jvm.getId(), 2, "Intellij Setup");
+        addNewLesson(jvm.getId(), section2.getId(), 5, "Intellij Installation", 30, "theory");
+        addNewLesson(jvm.getId(), section2.getId(), 6, "Remaster in progress", 30, "coding");
     }
 
     // Load sample data for Course Two
@@ -139,10 +137,11 @@ public class CourseManagerImplementation implements CourseManager {
         if (userOption == 1) {
             fileHandler.writeCourse(course, course.getTitle(), ".txt");
         } else if (userOption == 2) {
-            System.out.println("Give new name for the file: ");
-            scanner.nextLine();
-            String newTitle = scanner.nextLine();
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+            String newTitle = course.getTitle() + "-" + currentDateTime.format(formatter);
             fileHandler.writeCourse(course, newTitle, ".txt");
+            System.out.println("Course successfully written to file in the name : " + newTitle + ".txt");
         } else {
             System.out.println("Invalid option. No action taken.");
         }
@@ -162,8 +161,7 @@ public class CourseManagerImplementation implements CourseManager {
     }
 
     public boolean removeSection(int courseId, int sectionId) {
-        var sections = getCourse(courseId).getSections();
-        return sections.remove(getSection(courseId, sectionId));
+        return getCourse(courseId).getSections().remove(getSection(courseId, sectionId));
     }
 
     @Override
@@ -290,7 +288,7 @@ public class CourseManagerImplementation implements CourseManager {
         var sections = getCourse(courseId).getSections();
         int lessonsCount = 0;
         for (Section section : sections) {
-            lessonsCount = section.getLessons().size();
+            lessonsCount += section.getLessons().size();
         }
         return lessonsCount;
     }

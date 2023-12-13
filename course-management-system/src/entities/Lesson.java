@@ -13,7 +13,7 @@ public class Lesson {
     private LessonType type;
 
     public Lesson(int lessonId, String title, int duration, LessonType type) {
-        this.id = NEXT_ID++;
+        this.id = ++NEXT_ID;
         this.lessonId = lessonId;
         this.title = title;
         this.duration = duration;
