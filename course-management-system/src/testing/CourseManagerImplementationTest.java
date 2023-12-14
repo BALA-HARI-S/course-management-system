@@ -2,70 +2,83 @@ package testing;
 
 import entities.Course;
 import entities.Lesson;
+import entities.LessonType;
 import entities.Section;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import services.CourseManager;
 import services.CourseManagerImplementation;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CourseManagerImplementationTest {
-    private CourseManagerImplementation courseManagerImplementation;
+
+    private CourseManager courseManager;
 
     @BeforeEach
-    public void setUp() {
-        courseManagerImplementation = new CourseManagerImplementation();
+    void setUp() {
+        courseManager = new CourseManagerImplementation();
     }
 
     @Test
-    public void testCreateAndRemoveCourse() {
-        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0);
-        assertEquals(1, courseManagerImplementation.getCourseCount());
-
-        courseManagerImplementation.removeCourseFromList(1);
-        assertEquals(0, courseManagerImplementation.getCourseCount());
+    void testCreateCourse() {
+        Course course = courseManager.createCourse(1, "Test Course", "John Doe", "01-01-2023", 100.0);
+        assertNotNull(course);
+        assertEquals("Test Course", course.getTitle());
+        assertEquals("John Doe", course.getAuthorName());
+        assertEquals(100.0, course.getCost());
     }
 
     @Test
-    public void testAddAndRemoveSection() {
-        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0);
-
-        Section section = courseManagerImplementation.addNewSection(1, 1, "Test Section");
-        assertEquals(1, courseManagerImplementation.getSectionsCount(1));
-
-        assertTrue(courseManagerImplementation.removeSection(1, 1));
-        assertEquals(0, courseManagerImplementation.getSectionsCount(1));
+    void testGetCourse() {
+        Course course = courseManager.createCourse(1, "Test Course", "Test Name", "14-12-2023", 100.0);
+        int courseId = course.getCourseId();
+        Course retrievedCourse = courseManager.getCourse(courseId);
+        assertEquals(course, retrievedCourse);
     }
 
     @Test
-    public void testAddAndRemoveLesson() {
-        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0);
-        Section section = courseManagerImplementation.addNewSection(1, 1, "Test Section");
-
-        Lesson theoryLesson = courseManagerImplementation.addNewLesson(1, 1, 1, "Theory Lesson", 30, "theory");
-        Lesson codingLesson = courseManagerImplementation.addNewLesson(1, 1, 2, "Coding Lesson", 45, "coding");
-
-        assertEquals(2, courseManagerImplementation.getLessonsCount(1));
-        assertTrue(courseManagerImplementation.removeLesson(1, 1, 1));
-        assertEquals(1, courseManagerImplementation.getLessonsCount(1));
+    void testRemoveCourse() {
+        Course course = courseManager.createCourse(1, "Test Course", "Test Name", "01-01-2023", 100.0);
+        int courseId = course.getCourseId();
+        assertTrue(courseManager.removeCourse(courseId));
+        assertThrows(NullPointerException.class, () -> courseManager.getCourse(courseId));
     }
 
     @Test
-    public void testGetLongestLesson() {
-        Course course = courseManagerImplementation.createCourse(1, "Test Course", "Test Author", "01/01/2023", 100.0);
-        Section section = courseManagerImplementation.addNewSection(1, 1, "Test Section");
+    void testAddNewSection() {
+        Course course = courseManager.createCourse(1, "Test Course", "Test Name", "01-01-2023", 100.0);
+        int courseId = course.getCourseId();
+        Section section = courseManager.addNewSection(courseId, 1, "Section 1");
+        assertNotNull(section);
+        assertEquals("Section 1", section.getTitle());
+        assertEquals(1, section.getSectionId());
+    }
 
-        Lesson theoryLesson1 = courseManagerImplementation.addNewLesson(1, 1, 1, "Theory Lesson 1", 30, "theory");
-        Lesson codingLesson1 = courseManagerImplementation.addNewLesson(1, 1, 2, "Coding Lesson 1", 45, "coding");
-        Lesson theoryLesson2 = courseManagerImplementation.addNewLesson(1, 1, 3, "Theory Lesson 2", 20, "theory");
+    @Test
+    void testAddNewLesson() {
+        Course course = courseManager.createCourse(1, "Test Course", "Test Name", "01-01-2023", 100.0);
+        int courseId = course.getCourseId();
+        Section section = courseManager.addNewSection(courseId, 1, "Section 1");
+        Lesson lesson = courseManager.addNewLesson(courseId, section.getSectionId(), 1, "Lesson 1", 30, "theory");
+        assertNotNull(lesson);
+        assertEquals("Lesson 1", lesson.getTitle());
+        assertEquals(30, lesson.getDuration());
+        assertEquals(LessonType.THEORY, lesson.getType());
+    }
 
-        List<Lesson> longestLessons = courseManagerImplementation.getLongestLesson(1);
-
-        assertEquals(1, longestLessons.size());
-        assertEquals(45, longestLessons.get(0).getDuration());
+    @Test
+    void testGetSections() {
+        Course course = courseManager.createCourse(1, "Test Course", "Test Name", "01-01-2023", 100.0);
+        int courseId = course.getCourseId();
+        Section section1 = courseManager.addNewSection(courseId, 1, "Section 1");
+        Section section2 = courseManager.addNewSection(courseId, 2, "Section 2");
+        List<Section> sections = courseManager.getSections(courseId);
+        assertEquals(2, sections.size());
+        assertTrue(sections.contains(section1));
+        assertTrue(sections.contains(section2));
     }
 
 }

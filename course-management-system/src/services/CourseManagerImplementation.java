@@ -21,28 +21,28 @@ public class CourseManagerImplementation implements CourseManager {
     public void loadSampleDataOne() {
         var jvm = createCourse(1, "Java development master class for developers",
                 "Tim", "12-12-2023", 200.00);
-        var section1 = addNewSection(jvm.getId(), 1, "Course Introduction");
-        addNewLesson(jvm.getId(), section1.getId(), 1, "Introduction to the course", 2, "theory");
-        addNewLesson(jvm.getId(), section1.getId(), 2, "Remaster in progress", 10, "coding");
-        addNewLesson(jvm.getId(), section1.getId(), 3, "Introduction to the java", 2, "theory");
-        addNewLesson(jvm.getId(), section1.getId(), 4, "Remaster in progress", 10, "coding");
-        var section2 = addNewSection(jvm.getId(), 2, "Intellij Setup");
-        addNewLesson(jvm.getId(), section2.getId(), 5, "Intellij Installation", 30, "theory");
-        addNewLesson(jvm.getId(), section2.getId(), 6, "Remaster in progress", 30, "coding");
+        var section1 = addNewSection(jvm.getCourseId(), 1, "Course Introduction");
+        addNewLesson(jvm.getCourseId(), section1.getSectionId(), 1, "Introduction to the course", 2, "theory");
+        addNewLesson(jvm.getCourseId(), section1.getSectionId(), 2, "Remaster in progress", 10, "coding");
+        addNewLesson(jvm.getCourseId(), section1.getSectionId(), 3, "Introduction to the java", 2, "theory");
+        addNewLesson(jvm.getCourseId(), section1.getSectionId(), 4, "Remaster in progress", 10, "coding");
+        var section2 = addNewSection(jvm.getCourseId(), 2, "Intellij Setup");
+        addNewLesson(jvm.getCourseId(), section2.getSectionId(), 5, "Intellij Installation", 30, "theory");
+        addNewLesson(jvm.getCourseId(), section2.getSectionId(), 6, "Remaster in progress", 30, "coding");
     }
 
     // Load sample data for Course Two
     public void loadSampleDataTwo() {
         var webDevelopment = createCourse(2, "Web Development for front-end developers",
                 "Tim", "12-12-2023", 200.00);
-        var section1 = addNewSection(webDevelopment.getId(), 1, "Course Introduction");
-        addNewLesson(webDevelopment.getId(), section1.getId(), 1, "Introduction to the course", 2, "theory");
-        addNewLesson(webDevelopment.getId(), section1.getId(), 2, "Remaster in progress", 10, "coding");
-        addNewLesson(webDevelopment.getId(), section1.getId(), 3, "Introduction to the HTML,CSS,JS", 2, "theory");
-        addNewLesson(webDevelopment.getId(), section1.getId(), 4, "Remaster in progress", 10, "coding");
-        var section2 = addNewSection(webDevelopment.getId(), 2, "VS code Setup");
-        addNewLesson(webDevelopment.getId(), section2.getId(), 5, "VS code Installation", 30, "theory");
-        addNewLesson(webDevelopment.getId(), section2.getId(), 6, "Remaster in progress", 30, "coding");
+        var section1 = addNewSection(webDevelopment.getCourseId(), 1, "Course Introduction");
+        addNewLesson(webDevelopment.getCourseId(), section1.getSectionId(), 1, "Introduction to the course", 2, "theory");
+        addNewLesson(webDevelopment.getCourseId(), section1.getSectionId(), 2, "Remaster in progress", 10, "coding");
+        addNewLesson(webDevelopment.getCourseId(), section1.getSectionId(), 3, "Introduction to the HTML,CSS,JS", 2, "theory");
+        addNewLesson(webDevelopment.getCourseId(), section1.getSectionId(), 4, "Remaster in progress", 10, "coding");
+        var section2 = addNewSection(webDevelopment.getCourseId(), 2, "VS code Setup");
+        addNewLesson(webDevelopment.getCourseId(), section2.getSectionId(), 5, "VS code Installation", 30, "theory");
+        addNewLesson(webDevelopment.getCourseId(), section2.getSectionId(), 6, "Remaster in progress", 30, "coding");
     }
 
     //COURSE OPERATIONS
@@ -75,14 +75,18 @@ public class CourseManagerImplementation implements CourseManager {
     @Override
     public Course getCourse(int courseId) {
         return getCourses().stream()
-                .filter(course -> course.getId() == courseId)
+                .filter(course -> course.getCourseId() == courseId)
                 .findFirst()
                 .orElseThrow(NullPointerException::new);
 
     }
 
-    public void removeCourseFromList(int courseId) {
-        getCourses().remove(getCourse(courseId));
+    public boolean removeCourse(int courseId) {
+        var course = getCourse(courseId);
+        if (Objects.isNull(course)) {
+            System.out.println("Course not found! Provide correct course id");
+        }
+        return getCourses().remove(getCourse(courseId));
     }
 
     public boolean removeCourseFile(Path path) {
@@ -180,7 +184,7 @@ public class CourseManagerImplementation implements CourseManager {
     // SECTION OPERATIONS
 
     public Section addNewSection(int courseId, int sectionId, String title) {
-        if (title == null || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
+        if (Objects.isNull(title) || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
             throw new IllegalArgumentException("Title must not be empty or start with a integer");
         }
         var section = new Section(sectionId, title);
@@ -194,8 +198,13 @@ public class CourseManagerImplementation implements CourseManager {
 
     @Override
     public Section getSection(int courseId, int sectionId) {
-        return getCourse(courseId).getSections().stream()
-                .filter(section -> section.getId() == sectionId)
+        Course course = getCourse(courseId);
+        if (Objects.isNull(course)) {
+            System.out.println("Course not found for courseId: " + courseId);
+        }
+
+        return course.getSections().stream()
+                .filter(section -> section.getSectionId() == sectionId)
                 .findFirst()
                 .orElseThrow(NullPointerException::new);
     }
@@ -269,21 +278,9 @@ public class CourseManagerImplementation implements CourseManager {
             case CODING -> new CodingLesson(lessonId, title, duration);
         };
 
+        // Add lesson to section
         getSection(courseId, sectionId).addLesson(lesson);
         return lesson;
-    }
-
-    public boolean removeLesson(int courseId, int sectionId,
-                                int lessonId) {
-        var lessons = getSection(courseId, sectionId).getLessons();
-        for (Lesson lesson : lessons) {
-            if (lesson.getId() == lessonId) {
-                if (lessons.remove(lesson)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -292,6 +289,15 @@ public class CourseManagerImplementation implements CourseManager {
                 .filter(lesson -> lesson.getLessonId() == lessonId)
                 .findFirst()
                 .orElseThrow(NullPointerException::new);
+    }
+
+    public boolean removeLesson(int courseId, int sectionId,
+                                int lessonId) {
+        var lesson = getLesson(courseId, sectionId, lessonId);
+        if (Objects.isNull(lesson)) {
+            System.out.println("Lesson not found! Provide correct lesson id");
+        }
+        return getSection(courseId, sectionId).getLessons().remove(lesson);
     }
 
     public void editLessonName(int courseId, int sectionId,
@@ -315,8 +321,8 @@ public class CourseManagerImplementation implements CourseManager {
         return lessonsList;
     }
 
-    public List<Lesson> getListOfLessonsFromSection(int courseId, int sectionId) {
-        return getSection(courseId, sectionId).getLessons();
+    public List<Lesson> getLessons(int courseId, int sectionId) {
+        return getCourse(courseId).getSections().get(--sectionId).getLessons();
     }
 
     public List<Lesson> getLessonsWithSameKeyword(int courseId, String keyword) {

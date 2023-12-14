@@ -18,12 +18,12 @@ public interface CourseManager {
 
     // COURSE OPERATIONS
 
-    Course createCourse(int id, String title, String authorName,
+    Course createCourse(int courseId, String title, String authorName,
                         String datePublished, double cost);
 
     Course getCourse(int courseId);
 
-    void removeCourseFromList(int courseId);
+    boolean removeCourse(int courseId);
 
     boolean removeCourseFile(Path path);
 
@@ -76,7 +76,7 @@ public interface CourseManager {
 
     List<Lesson> getListOfAllLessons(int courseId);
 
-    List<Lesson> getListOfLessonsFromSection(int courseId, int sectionId);
+    List<Lesson> getLessons(int courseId, int sectionId);
 
     List<Lesson> getLessonsWithSameKeyword(int courseId, String keyword);
 

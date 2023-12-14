@@ -16,8 +16,7 @@ public class Main {
     public static void main(String[] args) {
 
         // load sample data
-        courseManager.loadSampleDataOne();
-        courseManager.loadSampleDataTwo();
+        loadSampleCourses();
 
         boolean flag = true;
         do {
@@ -192,7 +191,7 @@ public class Main {
                     courseManager.getCourses().forEach(c -> System.out.printf("\tCourse %d %s%n", c.getCourseId(), c.getTitle()));
                     System.out.print("\nChoose course to remove from list : ");
                     int i = scanner.nextInt();
-                    courseManager.removeCourseFromList(i);
+                    System.out.println(courseManager.removeCourse(i) ? "Course successfully removed" : "Something went wrong! Please try again");
                 }
                 case 3 -> {
                     System.out.println("Course Operation : Edit course name");
@@ -264,11 +263,9 @@ public class Main {
                     System.out.println("Section Operation : Remove section from course");
                     int courseId = getCourseIdFromCourseList("From which course do you want to remove a section? Course(No.) : ");
                     System.out.println("Sections available in " + courseManager.getCourse(courseId).getTitle());
-                    courseManager.getSections(courseId).forEach(section ->
-                            System.out.printf("\tSection %d - %s%n", section.getSectionId(), section.getTitle()));
                     int sectionId = getSectionIdFromSectionList(courseId, "Select section(No.) to remove : ");
                     courseManager.removeSection(courseId, sectionId);
-                    System.out.println("Section successfully removed from course. Available sections");
+                    System.out.println("Section successfully removed from course. \nAvailable sections");
 
                     courseManager.getSections(courseId).forEach(section ->
                             System.out.printf("\tSection %d - %s%n", section.getSectionId(), section.getTitle()));
@@ -342,7 +339,7 @@ public class Main {
                     scanner.nextLine();
                     System.out.printf("%dAvailable lessons in '%s' %n",
                             courseManager.getSection(courseId, sectionId).getLessons().size(), courseManager.getSection(courseId, sectionId).getTitle());
-                    courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins)%n",
+                    courseManager.getLessons(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration()));
                     try {
                         System.out.print("Lesson ID : ");
@@ -367,14 +364,13 @@ public class Main {
                     scanner.nextLine();
                     int sectionId = getSectionIdFromSectionList(courseId, "Choose section(No.) to remove a lesson : ");
                     System.out.println("Available lessons in this section : " + courseManager.getSections(courseId).get(sectionId - 1).getTitle());
-                    courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins)%n",
+                    courseManager.getLessons(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration()));
                     scanner.nextLine();
-                    System.out.println("Lesson ID : ");
-                    int lessonID = scanner.nextInt();
-                    var isRemoved = courseManager.removeLesson(courseId, sectionId, lessonID);
-                    System.out.println(isRemoved ? "Lesson successfully removed!" : "Cannot remove lesson!");
-                    courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
+                    System.out.print("Lesson ID : ");
+                    int lessonId = scanner.nextInt();
+                    courseManager.removeLesson(courseId, sectionId, lessonId);
+                    courseManager.getLessons(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
                 }
                 case 19 -> {
@@ -384,7 +380,7 @@ public class Main {
                     scanner.nextLine();
                     int sectionId = getSectionIdFromSectionList(courseId, "Choose section(No.) to rename a lesson : ");
                     System.out.println("Available lessons in this section : " + courseManager.getSections(courseId).get(sectionId - 1).getTitle());
-                    courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
+                    courseManager.getLessons(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
                     scanner.nextLine();
                     System.out.print("Which lesson do you want change the name : ");
@@ -394,7 +390,7 @@ public class Main {
                     String lessonName = scanner.nextLine();
                     courseManager.editLessonName(courseId, sectionId, lessonID, lessonName);
                     System.out.println("Lesson name changed successfully!");
-                    courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
+                    courseManager.getLessons(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
                 }
                 case 20 -> {
@@ -402,17 +398,10 @@ public class Main {
                     int courseId = getCourseIdFromCourseList("Choose course(No.) : ");
                     int sectionId = getSectionIdFromSectionList(courseId, "Choose section(No.) to list all lessons : ");
                     System.out.println("Available lessons in this section : " + courseManager.getSections(courseId).get(sectionId - 1).getTitle());
-                    courseManager.getListOfLessonsFromSection(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
+                    courseManager.getLessons(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
                 }
                 case 21 -> {
-                    System.out.println("Lesson Operation : List all lessons from course");
-                    int courseId = getCourseIdFromCourseList("Choose course(No.) to list all lessons");
-                    courseManager.getListOfAllLessons(courseId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
-                            l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
-
-                }
-                case 22 -> {
                     System.out.println("Lesson Operation : Lessons with same keyword");
                     System.out.println("Choose course to search for lesson with same keyword");
                     int courseId = getCourseIdFromCourseList("Choose course(No.) : ");
@@ -427,7 +416,7 @@ public class Main {
                                 l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
                     }
                 }
-                case 23 -> {
+                case 22 -> {
                     System.out.println("Lesson Operation : Total number of lessons");
                     int courseId = getCourseIdFromCourseList("Choose course(No.) to count lessons : ");
                     System.out.println("Total number of lessons in this course : " + courseManager.getLessonsCount(courseId));
@@ -467,14 +456,18 @@ public class Main {
                 17) Add lesson
                 18) Remove lesson
                 19) Edit lesson name
-                20) List lessons from particular section
-                21) List all lessons from course
-                22) Lessons with same keyword
-                23) Total number of lessons
+                20) List lessons 
+                21) Lessons with same keyword
+                22) Total number of lessons
                 Press 0 to exit()
                                 
                 """;
         System.out.println(textBlock);
+    }
+
+    private static void loadSampleCourses() {
+        courseManager.loadSampleDataOne();
+        courseManager.loadSampleDataTwo();
     }
 
     private static int getCourseIdFromCourseList(String message) {
