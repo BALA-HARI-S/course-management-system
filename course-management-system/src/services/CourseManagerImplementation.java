@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -123,14 +124,30 @@ public class CourseManagerImplementation implements CourseManager {
         }
     }
 
-    public void printCourse(Course course) {
-        System.out.printf("Course %d - %s%n", course.getCourseId(), course.getTitle());
+    public String retrieveCourse(Course course) {
+        StringBuilder result = new StringBuilder();
+
+        result.append(String.format("%nAuthor Name   - %s%n", course.getAuthorName()));
+
+        LocalDate localDate = course.getDatePublished().atZone(ZoneId.systemDefault()).toLocalDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String formattedDate = localDate.format(formatter);
+        result.append(String.format("Publish Date  - %s%n", formattedDate));
+
+        result.append(String.format("Course Price  - %.2f%n", course.getPrice()));
+        result.append(String.format("Course Rating - %.1f%n", course.getRating()));
+        result.append(String.format("Course %d - %s%n", course.getCourseId(), course.getTitle()));
+
         for (Section section : course.getSections()) {
-            System.out.printf("\tSection %d - %s%n", section.getSectionId(), section.getTitle());
+            result.append(String.format("\tSection %d - %s%n", section.getSectionId(), section.getTitle()));
+
             for (Lesson lesson : section.getLessons()) {
-                System.out.printf("\t\tLesson %d - %s (%d mins) (%s)%n", lesson.getLessonId(), lesson.getTitle(), lesson.getDuration(), lesson.getType());
+                result.append(String.format("\t\tLesson %d - %s (%d mins) (%s)%n",
+                        lesson.getLessonId(), lesson.getTitle(), lesson.getDuration(), lesson.getType()));
             }
         }
+
+        return result.toString();
     }
 
     // Write a course to a file
@@ -257,6 +274,19 @@ public class CourseManagerImplementation implements CourseManager {
         return sections.get(0);
     }
 
+    public Section getSectionWithMostCodingLessons(int courseId) {
+        var sections = getSections(courseId);
+        sections.sort(new CodingLessonComparator().reversed());
+        return sections.get(0);
+    }
+
+
+    public Section getSectionWithMostTheoryLessons(int courseId) {
+        var sections = getSections(courseId);
+        sections.sort(new TheoryLessonComparator().reversed());
+        return sections.get(0);
+    }
+
     // LESSON OPERATIONS
     public Lesson addNewLesson(int courseId, int sectionId,
                                int lessonId, String title, int duration, String type) {
@@ -285,10 +315,30 @@ public class CourseManagerImplementation implements CourseManager {
 
     @Override
     public Lesson getLesson(int courseId, int sectionId, int lessonId) {
-        return getSection(courseId, sectionId).getLessons().stream()
+        List<Lesson> lessons = getSection(courseId, sectionId).getLessons().stream()
                 .filter(lesson -> lesson.getLessonId() == lessonId)
-                .findFirst()
-                .orElseThrow(NullPointerException::new);
+                .toList();
+
+        if (lessons.isEmpty()) {
+            throw new NullPointerException("Lesson not found!");
+        } else if (lessons.size() == 1) {
+            return lessons.get(0);
+        } else {
+            System.out.println("Multiple lessons found with the same ID. Please select by title: ");
+
+            for (int i = 0; i < lessons.size(); i++) {
+                System.out.printf("%d) %s%n", i + 1, lessons.get(i).getTitle());
+            }
+
+            Scanner scanner = new Scanner(System.in);
+            int userChoice;
+            do {
+                System.out.print("Enter the number corresponding to the desired lesson: ");
+                userChoice = scanner.nextInt();
+            } while (userChoice < 1 || userChoice > lessons.size());
+
+            return lessons.get(userChoice - 1);
+        }
     }
 
     public boolean removeLesson(int courseId, int sectionId,
@@ -354,6 +404,48 @@ class SectionLessonComparator implements Comparator<Section> {
     @Override
     public int compare(Section section1, Section section2) {
         return Integer.compare(section1.getLessons().size(), section2.getLessons().size());
+    }
+}
+
+class CodingLessonComparator implements Comparator<Section> {
+    @Override
+    public int compare(Section section1, Section section2) {
+        List<Lesson> sectionOneCodingLessons = new ArrayList<>();
+        List<Lesson> sectionTwoCodingLessons = new ArrayList<>();
+
+        for (Lesson lesson : section1.getLessons()) {
+            if (lesson.getType().equals(LessonType.CODING)) {
+                sectionOneCodingLessons.add(lesson);
+            }
+        }
+        for (Lesson lesson : section2.getLessons()) {
+            if (lesson.getType().equals(LessonType.CODING)) {
+                sectionTwoCodingLessons.add(lesson);
+            }
+        }
+
+        return Integer.compare(sectionOneCodingLessons.size(), sectionTwoCodingLessons.size());
+    }
+}
+
+class TheoryLessonComparator implements Comparator<Section> {
+    @Override
+    public int compare(Section section1, Section section2) {
+        List<Lesson> sectionOneTheoryLessons = new ArrayList<>();
+        List<Lesson> sectionTwoTheoryLessons = new ArrayList<>();
+
+        for (Lesson lesson : section1.getLessons()) {
+            if (lesson.getType().equals(LessonType.THEORY)) {
+                sectionOneTheoryLessons.add(lesson);
+            }
+        }
+        for (Lesson lesson : section2.getLessons()) {
+            if (lesson.getType().equals(LessonType.THEORY)) {
+                sectionTwoTheoryLessons.add(lesson);
+            }
+        }
+
+        return Integer.compare(sectionOneTheoryLessons.size(), sectionTwoTheoryLessons.size());
     }
 }
 

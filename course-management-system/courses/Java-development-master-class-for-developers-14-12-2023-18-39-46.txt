@@ -1,0 +1,14 @@
+
+Author Name   - Tim
+Publish Date  - 12-12-2023
+Course Price  - 200.00
+Course Rating - 3.9
+Course 1 - Java development master class for developers
+	Section 1 - Course Introduction
+		Lesson 1 - Introduction to the course (2 mins) (THEORY)
+		Lesson 2 - Remaster in progress (10 mins) (CODING)
+		Lesson 3 - Introduction to the java (2 mins) (THEORY)
+		Lesson 4 - Remaster in progress (10 mins) (CODING)
+	Section 2 - Intellij Setup
+		Lesson 5 - Intellij Installation (30 mins) (THEORY)
+		Lesson 6 - Remaster in progress (30 mins) (CODING)

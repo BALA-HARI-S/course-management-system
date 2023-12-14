@@ -7,26 +7,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Course model.
+ */
 public class Course {
+    /**
+     * Auto-generated id for each new course.
+     */
     private static int NEXT_ID = 0;
     private int id;
     private int courseId;
     private String title;
     private String authorName;
     private Instant datePublished;
-    private double cost;
+    private double price;
     private double rating;
     private List<Section> sections;
     private Random random = new Random();
 
-    public Course(int courseId, String title, String authorName, String datePublished, double cost) {
+    public Course(int courseId, String title, String authorName, String datePublished, double price) {
         this.id = ++NEXT_ID;
         this.courseId = courseId;
         this.title = title;
         this.authorName = authorName;
         this.datePublished = convertInstant(datePublished);
-        this.cost = cost;
-        this.rating = random.nextDouble() * 5;
+        this.price = price;
+        this.rating = 1 + (random.nextDouble() * (5 - 1));
         this.sections = new ArrayList<Section>();
     }
 
@@ -58,12 +64,12 @@ public class Course {
         this.authorName = authorName;
     }
 
-    public double getCost() {
-        return cost;
+    public double getPrice() {
+        return price;
     }
 
-    public void setCost(double cost) {
-        this.cost = cost;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public double getRating() {
@@ -78,10 +84,15 @@ public class Course {
         return datePublished;
     }
 
-    private Instant convertInstant(String userInput) {
-        LocalDate localDate = LocalDate.parse(userInput, java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-        Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-        return instant;
+    /**
+     * Converts a String date to {@link Instant}.
+     *
+     * @param dateStr date string in 'dd-MM-yyy' format
+     * @return Instant
+     */
+    private Instant convertInstant(String dateStr) {
+        LocalDate localDate = LocalDate.parse(dateStr, java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
     }
 
     public void setDatePublished(Instant datePublished) {

@@ -1,9 +1,10 @@
-Course 2 - Web Development for front-end developers
+Author name - TimCourse price - 200.0
+Course 1 - Java development master class for developers
 	Section 1 - Course Introduction
 		Lesson 1 - Introduction to the course (2 min) (THEORY)
 		Lesson 2 - Remaster in progress (10 min) (CODING)
-		Lesson 3 - Introduction to the HTML,CSS,JS (2 min) (THEORY)
+		Lesson 3 - Introduction to the java (2 min) (THEORY)
 		Lesson 4 - Remaster in progress (10 min) (CODING)
-	Section 2 - VS code Setup
-		Lesson 5 - VS code Installation (30 min) (THEORY)
+	Section 2 - Intellij Setup
+		Lesson 5 - Intellij Installation (30 min) (THEORY)
 		Lesson 6 - Remaster in progress (30 min) (CODING)

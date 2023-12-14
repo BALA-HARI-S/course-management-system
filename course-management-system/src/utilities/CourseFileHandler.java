@@ -1,8 +1,8 @@
 package utilities;
 
 import entities.Course;
-import entities.Lesson;
-import entities.Section;
+import services.CourseManager;
+import services.CourseManagerImplementation;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -31,20 +31,8 @@ public class CourseFileHandler {
         Path filePath = directoryPath.resolve(filename);
 
         try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
-            writer.write("Author name - %s".formatted(course.getAuthorName()));
-            writer.write("Course price - %s".formatted(course.getCost()));
-            writer.newLine();
-            writer.write("Course %d - %s".formatted(course.getCourseId(), course.getTitle()));
-            writer.newLine();
-            for (Section section : course.getSections()) {
-                writer.write("\tSection %d - %s".formatted(section.getSectionId(), section.getTitle()));
-                writer.newLine();
-                for (Lesson lesson : section.getLessons()) {
-                    writer.write("\t\tLesson %d - %s (%d min) (%s)".formatted(lesson.getLessonId(),
-                            lesson.getTitle(), lesson.getDuration(), lesson.getType()));
-                    writer.newLine();
-                }
-            }
+            CourseManager manger = new CourseManagerImplementation();
+            writer.write(manger.retrieveCourse(course));
         } catch (IOException e) {
             e.printStackTrace();
         }

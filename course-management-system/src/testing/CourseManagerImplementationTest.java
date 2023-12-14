@@ -28,7 +28,7 @@ public class CourseManagerImplementationTest {
         assertNotNull(course);
         assertEquals("Test Course", course.getTitle());
         assertEquals("John Doe", course.getAuthorName());
-        assertEquals(100.0, course.getCost());
+        assertEquals(100.0, course.getPrice());
     }
 
     @Test

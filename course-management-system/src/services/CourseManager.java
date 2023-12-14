@@ -29,6 +29,12 @@ public interface CourseManager {
 
     List<Course> getCourses();
 
+    /**
+     * Gets a {@link List} of paths for all courses.
+     *
+     * @param path
+     * @return
+     */
     List<Path> getListOfCourseFiles(Path path);
 
     int getCourseCount();
@@ -37,9 +43,11 @@ public interface CourseManager {
 
     void editCourseName(int courseId, String title);
 
-    void printCourse(Course course);
+    String retrieveCourse(Course course);
 
     void writeCourseToFile(Course course) throws FileAlreadyExistsException;
+
+    void handleFileAlreadyExists(Course course);
 
     void readCourseFromFile(String fileReadOption);
 
@@ -63,6 +71,10 @@ public interface CourseManager {
     List<Lesson> getLongestLesson(int courseId);
 
     Section getSectionWithMostLessons(int courseId);
+
+    Section getSectionWithMostCodingLessons(int courseId);
+
+    Section getSectionWithMostTheoryLessons(int courseId);
 
 
     // LESSON OPERATIONS

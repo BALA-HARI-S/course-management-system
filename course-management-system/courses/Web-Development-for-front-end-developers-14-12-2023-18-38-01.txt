@@ -1,0 +1,14 @@
+
+Author Name   - Tim
+Publish Date  - 12-12-2023
+Course Price  - 200.00
+Course Rating - 3.7
+Course 2 - Web Development for front-end developers
+	Section 1 - Course Introduction
+		Lesson 1 - Introduction to the course (2 mins) (THEORY)
+		Lesson 2 - Remaster in progress (10 mins) (CODING)
+		Lesson 3 - Introduction to the HTML,CSS,JS (2 mins) (THEORY)
+		Lesson 4 - Remaster in progress (10 mins) (CODING)
+	Section 2 - VS code Setup
+		Lesson 5 - VS code Installation (30 mins) (THEORY)
+		Lesson 6 - Remaster in progress (30 mins) (CODING)
