@@ -19,6 +19,7 @@ public class CourseManagerImplementation implements CourseManager {
     private final CourseFileHandler fileHandler = new CourseFileHandler();
 
     // Load sample data for Course One
+    @Override
     public void loadSampleDataOne() {
         var jvm = createCourse(1, "Java development master class for developers",
                 "Tim", "12-12-2023", 200.00);
@@ -33,6 +34,7 @@ public class CourseManagerImplementation implements CourseManager {
     }
 
     // Load sample data for Course Two
+    @Override
     public void loadSampleDataTwo() {
         var webDevelopment = createCourse(2, "Web Development for front-end developers",
                 "Tim", "12-12-2023", 200.00);
@@ -47,8 +49,8 @@ public class CourseManagerImplementation implements CourseManager {
     }
 
     //COURSE OPERATIONS
-
     // Create a new course
+    @Override
     public Course createCourse(int courseId, String title, String authorName,
                                String datePublished, double cost) {
         if (Objects.isNull(title) || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
@@ -73,6 +75,7 @@ public class CourseManagerImplementation implements CourseManager {
         return course;
     }
 
+    // Get a course by its ID
     @Override
     public Course getCourse(int courseId) {
         return getCourses().stream()
@@ -82,6 +85,8 @@ public class CourseManagerImplementation implements CourseManager {
 
     }
 
+    // Remove a course by its ID
+    @Override
     public boolean removeCourse(int courseId) {
         var course = getCourse(courseId);
         if (Objects.isNull(course)) {
@@ -90,22 +95,32 @@ public class CourseManagerImplementation implements CourseManager {
         return getCourses().remove(getCourse(courseId));
     }
 
+    // Remove a course file by its path
+    @Override
     public boolean removeCourseFile(Path path) {
         return fileHandler.removeCourseFile(path);
     }
 
+    // Get a list of all courses
+    @Override
     public List<Course> getCourses() {
         return courses;
     }
 
+    // Get a list of paths for all course files
+    @Override
     public List<Path> getListOfCourseFiles(Path path) {
         return fileHandler.listCourseFiles(path);
     }
 
+    // Get the total number of courses
+    @Override
     public int getCourseCount() {
         return getCourses().size();
     }
 
+    // Get the total number of course files
+    @Override
     public int getCourseFilesCount() {
         Path rootDirectory = Path.of(".");
         String subdirectoryName = "courses";
@@ -113,6 +128,8 @@ public class CourseManagerImplementation implements CourseManager {
         return getListOfCourseFiles(courseDirectoryPath).size();
     }
 
+    // Edit the name of a course
+    @Override
     public void editCourseName(int courseId, String title) {
         if (Objects.isNull(title) || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
             throw new IllegalArgumentException("Title must not be empty or start with a integer");
@@ -124,6 +141,8 @@ public class CourseManagerImplementation implements CourseManager {
         }
     }
 
+    // Retrieve course information as a formatted string
+    @Override
     public String retrieveCourse(Course course) {
         StringBuilder result = new StringBuilder();
 
@@ -151,6 +170,7 @@ public class CourseManagerImplementation implements CourseManager {
     }
 
     // Write a course to a file
+    @Override
     public void writeCourseToFile(Course course) throws FileAlreadyExistsException {
         String filename = course.getTitle() + ".txt";
         Path rootDirectory = Paths.get(".");
@@ -170,6 +190,8 @@ public class CourseManagerImplementation implements CourseManager {
 
     }
 
+    // Handle the case when a file already exists for a course
+    @Override
     public void handleFileAlreadyExists(Course course) {
         Scanner scanner = new Scanner(System.in);
         String filename = course.getTitle();
@@ -193,13 +215,15 @@ public class CourseManagerImplementation implements CourseManager {
         }
     }
 
-    // Read a course from file
+    // Read course information from a file
+    @Override
     public void readCourseFromFile(String fileReadOption) {
         fileHandler.readCourse(fileReadOption);
     }
 
     // SECTION OPERATIONS
-
+    // Add a new section to a course
+    @Override
     public Section addNewSection(int courseId, int sectionId, String title) {
         if (Objects.isNull(title) || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
             throw new IllegalArgumentException("Title must not be empty or start with a integer");
@@ -209,10 +233,13 @@ public class CourseManagerImplementation implements CourseManager {
         return section;
     }
 
+    // Remove a section from a course
+    @Override
     public boolean removeSection(int courseId, int sectionId) {
         return getCourse(courseId).getSections().remove(getSection(courseId, sectionId));
     }
 
+    // Get a section by its ID
     @Override
     public Section getSection(int courseId, int sectionId) {
         Course course = getCourse(courseId);
@@ -226,37 +253,50 @@ public class CourseManagerImplementation implements CourseManager {
                 .orElseThrow(NullPointerException::new);
     }
 
+    // Edit the title of a section
+    @Override
     public void editSectionName(int courseId, int sectionId, String title) {
         if (Objects.isNull(title) || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
             throw new IllegalArgumentException("Title must not be empty or start with a integer");
         }
         try {
+            // Edit the title of the specified section
             getSection(courseId, sectionId).setTitle(title);
         } catch (NullPointerException e) {
             System.out.println("Section not found! Provide correct section ID.");
         }
     }
 
+    // Get all sections of a course
+    @Override
     public List<Section> getSections(int courseId) {
         return getCourse(courseId).getSections();
     }
 
+    // Get the count of sections in a course
+    @Override
     public int getSectionsCount(int courseId) {
         return getCourse(courseId).getSections().size();
     }
 
+    // Get the shortest section by calculating total lesson duration
+    @Override
     public Section getShortestSection(int courseId) {
         var sections = getSections(courseId);
-        sections.sort(new SortestSectionComparator());
+        sections.sort(new ShortestSectionComparator());
         return sections.get(0);
     }
 
+    // Get the longest section by calculating total lesson duration
+    @Override
     public Section getLongestSection(int courseId) {
         var sections = getSections(courseId);
-        sections.sort(new SortestSectionComparator().reversed());
+        sections.sort(new ShortestSectionComparator().reversed());
         return sections.get(0);
     }
 
+    // Get the longest lesson in each section of a course
+    @Override
     public List<Lesson> getLongestLesson(int courseId) {
         var sections = getSections(courseId);
         List<Lesson> longestLessons = new ArrayList<>();
@@ -268,26 +308,33 @@ public class CourseManagerImplementation implements CourseManager {
         return longestLessons;
     }
 
+    // Get the section with the most lessons in a course
+    @Override
     public Section getSectionWithMostLessons(int courseId) {
         var sections = getSections(courseId);
-        sections.sort(new SectionLessonComparator().reversed());
+        sections.sort(new SectionLessonDurationComparator().reversed());
         return sections.get(0);
     }
 
+    // Get the section with the most coding lessons in a course
+    @Override
     public Section getSectionWithMostCodingLessons(int courseId) {
         var sections = getSections(courseId);
         sections.sort(new CodingLessonComparator().reversed());
         return sections.get(0);
     }
 
-
+    // Get the section with the most theory lessons in a course
+    @Override
     public Section getSectionWithMostTheoryLessons(int courseId) {
         var sections = getSections(courseId);
         sections.sort(new TheoryLessonComparator().reversed());
         return sections.get(0);
     }
 
-    // LESSON OPERATIONS
+    // LESSON OPERATION
+    // Add a new lesson to a section
+    @Override
     public Lesson addNewLesson(int courseId, int sectionId,
                                int lessonId, String title, int duration, String type) {
         if (title == null || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
@@ -313,6 +360,7 @@ public class CourseManagerImplementation implements CourseManager {
         return lesson;
     }
 
+    // Get a lesson by its ID
     @Override
     public Lesson getLesson(int courseId, int sectionId, int lessonId) {
         List<Lesson> lessons = getSection(courseId, sectionId).getLessons().stream()
@@ -341,6 +389,8 @@ public class CourseManagerImplementation implements CourseManager {
         }
     }
 
+    // Remove a lesson by its ID
+    @Override
     public boolean removeLesson(int courseId, int sectionId,
                                 int lessonId) {
         var lesson = getLesson(courseId, sectionId, lessonId);
@@ -350,6 +400,8 @@ public class CourseManagerImplementation implements CourseManager {
         return getSection(courseId, sectionId).getLessons().remove(lesson);
     }
 
+    // Edit the title of the Lesson
+    @Override
     public void editLessonName(int courseId, int sectionId,
                                int lessonId, String title) {
         if (Objects.isNull(title) || title.trim().isEmpty() || Character.isDigit(title.charAt(0))) {
@@ -362,6 +414,8 @@ public class CourseManagerImplementation implements CourseManager {
         }
     }
 
+    // Get lessons from all sections
+    @Override
     public List<Lesson> getListOfAllLessons(int courseId) {
         var sections = getSections(courseId);
         List<Lesson> lessonsList = new ArrayList<>();
@@ -371,10 +425,14 @@ public class CourseManagerImplementation implements CourseManager {
         return lessonsList;
     }
 
+    // Get Lesson by its ID
+    @Override
     public List<Lesson> getLessons(int courseId, int sectionId) {
         return getCourse(courseId).getSections().get(--sectionId).getLessons();
     }
 
+    // Get Lessons with same keyword
+    @Override
     public List<Lesson> getLessonsWithSameKeyword(int courseId, String keyword) {
         var lessonsList = getListOfAllLessons(courseId);
         List<Lesson> lessonsFound = new ArrayList<>();
@@ -389,6 +447,8 @@ public class CourseManagerImplementation implements CourseManager {
         return lessonsFound;
     }
 
+    // Get Total number of lessons
+    @Override
     public int getLessonsCount(int courseId) {
         var sections = getCourse(courseId).getSections();
         int lessonsCount = 0;
@@ -400,13 +460,15 @@ public class CourseManagerImplementation implements CourseManager {
 
 }
 
-class SectionLessonComparator implements Comparator<Section> {
+// Compare Section's Lessons size to get Longest Section
+class SectionLessonDurationComparator implements Comparator<Section> {
     @Override
     public int compare(Section section1, Section section2) {
         return Integer.compare(section1.getLessons().size(), section2.getLessons().size());
     }
 }
 
+// Compare Sections to get Section with most CODING lessons
 class CodingLessonComparator implements Comparator<Section> {
     @Override
     public int compare(Section section1, Section section2) {
@@ -428,6 +490,7 @@ class CodingLessonComparator implements Comparator<Section> {
     }
 }
 
+// Compare Sections to get Section with most THEORY lessons
 class TheoryLessonComparator implements Comparator<Section> {
     @Override
     public int compare(Section section1, Section section2) {
@@ -449,7 +512,8 @@ class TheoryLessonComparator implements Comparator<Section> {
     }
 }
 
-class SortestSectionComparator implements Comparator<Section> {
+// Compare All Lessons duration to get Shortest Section
+class ShortestSectionComparator implements Comparator<Section> {
     @Override
     public int compare(Section section1, Section section2) {
         int sectionOneDuration = 0;
@@ -467,6 +531,7 @@ class SortestSectionComparator implements Comparator<Section> {
     }
 }
 
+// Get the longest lesson in each section
 class LogestLessonComparator implements Comparator<Lesson> {
     @Override
     public int compare(Lesson lesson1, Lesson lesson2) {

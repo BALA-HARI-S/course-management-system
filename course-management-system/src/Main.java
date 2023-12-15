@@ -110,8 +110,8 @@ public class Main {
                                             System.out.printf("Section name successfully changed to '%s'%n", newSection.getTitle());
                                         }
                                         case 2 -> {
-                                            courseManager.removeSection(newCourse.getId(), newSection.getId());
-                                            System.out.print("Section successfully removed");
+                                            System.out.print(courseManager.removeSection(newCourse.getId(), newSection.getId()) ?
+                                                    "Section successfully removed" : "Something went wrong! Cannot remove the course!");
                                             isSectionOperationsRunning = false;
                                         }
                                         case 3 -> {
@@ -395,7 +395,8 @@ public class Main {
                     scanner.nextLine();
                     System.out.print("Lesson Id : ");
                     int lessonId = scanner.nextInt();
-                    courseManager.removeLesson(courseId, sectionId, lessonId);
+                    System.out.println(courseManager.removeLesson(courseId, sectionId, lessonId) ?
+                            "Lesson successfully Removed" : "Cannot delete the lesson!");
                     courseManager.getLessons(courseId, sectionId).forEach(l -> System.out.printf("\tLesson %d - %s (%d mins) (%s)%n",
                             l.getLessonId(), l.getTitle(), l.getDuration(), l.getType()));
                 }
